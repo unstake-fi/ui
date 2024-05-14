@@ -45,7 +45,7 @@
     </div>
   </button>
   <button
-    class="absolute -right-2.5 -top-1.5 flex items-center justify-center mr-1.5 visible rounded-full bg-black p-1 z-40"
+    class="absolute -right-2.5 -top-1.5 flex items-center justify-center mr-1.5 visible rounded-full bg-neutral-700 p-1 z-40"
     class:hidden={!pinned}
     aria-label="Unpin RPC"
     on:click={(e) => {
@@ -56,7 +56,7 @@
       e.stopPropagation();
     }}
   >
-    <LockIcon class="w-3 h-3 text-gray-200" />
+    <LockIcon class="w-3 h-3 text-stone-300" />
   </button>
 </div>
 
@@ -91,13 +91,13 @@
 
 <style lang="postcss">
   .button {
-    @apply rounded-lg border border-gray-200 flex flex-row items-center transition-colors;
-    @apply hover:bg-gray-200;
+    @apply rounded-md border border-neutral-600 flex flex-row items-center transition-colors;
+    @apply hover:bg-neutral-800;
   }
   .active {
     @apply border-blue-500;
   }
   .content {
-    @apply z-30 rounded-lg bg-white p-3 pt-2 shadow-sm border border-gray-100 w-60;
+    @apply z-20 rounded-md bg-stone-900 p-3 pt-2 shadow-sm border border-neutral-800 w-60;
   }
 </style>

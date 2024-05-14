@@ -4,8 +4,9 @@ import { get, writable } from "svelte/store";
 import { refreshing } from "$lib/refreshing";
 import type { KujiraClient, NetworkOptions } from "./types";
 import { browser } from "$app/environment";
+import type { NETWORK } from "$lib/resources/networks";
 
-export const savedNetwork = browser ? persisted('network', { chainId: 'kaiyo-1' }) : writable({ chainId: 'kaiyo-1' });
+export const savedNetwork = browser ? persisted<{ chainId: NETWORK }>('network', { chainId: 'kaiyo-1' }) : writable<{ chainId: NETWORK }>({ chainId: 'kaiyo-1' });
 export const savedNetworkOptions = browser ? persisted<NetworkOptions>('network-options', {}) : writable<NetworkOptions>({});
 
 export const client = refreshing<KujiraClient>(async () => {

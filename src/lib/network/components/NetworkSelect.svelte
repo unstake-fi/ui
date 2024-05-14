@@ -26,7 +26,9 @@
     aria-label="Change Network"
   >
     <svelte:component this={networkMeta.icon} class="w-4 h-4" />
-    <p class="overflow-hidden overflow-ellipsis whitespace-nowrap flex-shrink hidden sm:block">
+    <p
+      class="overflow-hidden overflow-ellipsis whitespace-nowrap flex-shrink hidden sm:block"
+    >
       {networkMeta.name}
       <span class="text-gray-400">({networkMeta.chainId})</span>
     </p>
@@ -52,10 +54,10 @@
               {meta.name}
             </p>
           </div>
-          <span class="text-gray-400">({meta.chainId})</span>
+          <span class="text-stone-400">({meta.chainId})</span>
         </button>
       {/each}
-      <hr class="border-gray-100 mt-2 mb-0.5" />
+      <hr class="border-stone-600 mt-2 mb-1" />
       <RpcSelect />
       {#await $client catch e}
         <p class="text-red-400 text-xs">
@@ -68,13 +70,13 @@
 
 <style lang="postcss">
   .button {
-    @apply rounded-lg border border-gray-200 flex flex-row items-center transition-colors;
-    @apply hover:bg-gray-200;
+    @apply rounded-md border border-neutral-600 flex flex-row items-center transition-colors;
+    @apply hover:bg-neutral-800;
   }
   .active {
     @apply border-blue-500;
   }
   .content {
-    @apply z-20 rounded-lg bg-white p-3 pt-2 shadow-sm border border-gray-100 w-60;
+    @apply z-20 rounded-md bg-stone-900 p-3 pt-2 shadow-sm border border-neutral-800 w-60;
   }
 </style>
