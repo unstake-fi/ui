@@ -1,11 +1,11 @@
-import { CosmjsOfflineSigner, connectSnap, getSnap, suggestChain } from "@leapwallet/cosmos-snap-provider";
-import IconMetaMask from "../icons/IconMetaMask.svelte";
-import type { StdFee } from "@cosmjs/stargate";
 import { CHAIN_INFO, type NETWORK } from "$lib/resources/networks";
 import type { EncodeObject, OfflineSigner } from "@cosmjs/proto-signing";
-import { WalletAdapter, type AccountData, type WalletMetadata, ConnectionError, type ISigner } from "./types";
+import type { StdFee } from "@cosmjs/stargate";
 import type { TendermintClient } from "@cosmjs/tendermint-rpc";
+import { CosmjsOfflineSigner, connectSnap, getSnap, suggestChain } from "@leapwallet/cosmos-snap-provider";
+import IconMetaMask from "../icons/IconMetaMask.svelte";
 import { convertAccountData, offlineSignerSign } from "./common";
+import { ConnectionError, WalletAdapter, type AccountData, type ISigner, type WalletMetadata } from "./types";
 
 export class MetaMask implements ISigner {
     private constructor(private acc: AccountData, private signer: OfflineSigner) { }

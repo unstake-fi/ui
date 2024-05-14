@@ -1,5 +1,5 @@
 import type { KujiraClient } from "$lib/network/types";
-import { BroadcastTxError, fromTendermintEvent, type DeliverTxResponse, type IndexedTx, TimeoutError } from "@cosmjs/stargate";
+import { BroadcastTxError, TimeoutError, fromTendermintEvent, type DeliverTxResponse, type IndexedTx } from "@cosmjs/stargate";
 import { TxMsgData } from "cosmjs-types/cosmos/base/abci/v1beta1/abci";
 
 export async function doBroadcastTx(client: KujiraClient, tx: Uint8Array) {

@@ -1,6 +1,6 @@
 <script lang="ts" generics="T">
   import autoAnimate from "@formkit/auto-animate";
-  import { ArrowDown, ChevronDown } from "lucide-svelte";
+  import { ChevronDown } from "lucide-svelte";
 
   import { onMount } from "svelte";
 

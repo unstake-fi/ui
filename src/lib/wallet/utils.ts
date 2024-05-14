@@ -1,11 +1,10 @@
-import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
+import { createWasmAminoConverters, wasmTypes } from "@cosmjs/cosmwasm-stargate";
+import { Uint64 } from "@cosmjs/math";
+import { Registry, coins } from "@cosmjs/proto-signing";
 import * as s from "@cosmjs/stargate";
 import { GasPrice, defaultRegistryTypes, type StdFee } from "@cosmjs/stargate";
-import { wasmTypes } from "@cosmjs/cosmwasm-stargate";
 import { ibcTypes } from "@cosmjs/stargate/build/modules";
-import { Registry, coins } from "@cosmjs/proto-signing";
 import type BigNumber from "bignumber.js";
-import { Uint64 } from "@cosmjs/math";
 import type { GasInfo } from "cosmjs-types/cosmos/base/abci/v1beta1/abci";
 
 const types = [

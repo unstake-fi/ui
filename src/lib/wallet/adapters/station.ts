@@ -1,12 +1,12 @@
-import type StationType from "@terra-money/station-connector";
-import { WalletAdapter, type AccountData, type WalletMetadata, ConnectionError, type ISigner } from "./types";
-import IconStation from "../icons/IconStation.svelte";
-import type { EncodeObject, OfflineSigner } from "@cosmjs/proto-signing";
 import { CHAIN_INFO, type NETWORK } from "$lib/resources/networks";
+import type { EncodeObject, OfflineSigner } from "@cosmjs/proto-signing";
 import type { StdFee } from "@cosmjs/stargate";
-import type { ChainInfoResponse } from "@terra-money/station-connector/keplrConnector";
 import type { TendermintClient } from "@cosmjs/tendermint-rpc";
+import type StationType from "@terra-money/station-connector";
+import type { ChainInfoResponse } from "@terra-money/station-connector/keplrConnector";
+import IconStation from "../icons/IconStation.svelte";
 import { convertAccountData, offlineSignerSign } from "./common";
+import { ConnectionError, WalletAdapter, type AccountData, type ISigner, type WalletMetadata } from "./types";
 
 declare global {
     interface Window {

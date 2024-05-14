@@ -31,7 +31,6 @@
     ChevronsDown,
     ExternalLink,
     Fuel,
-    Info,
     OctagonX,
     TriangleAlert,
   } from "lucide-svelte";

@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { Check, X } from "lucide-svelte";
-  import { createDialog, melt, type CreateDialogProps } from "@melt-ui/svelte";
-  import { SonarURI } from "$lib/wallet/adapters/sonar";
-  import QR from "$lib/wallet/components/QR.svelte";
-  import IconSonar from "$lib/wallet/icons/IconSonar.svelte";
-  import { writable, type Writable } from "svelte/store";
-  import type { Connectable, WalletAdapter } from "$lib/wallet/adapters/types";
-  import { WALLETS, adapterToIWallet } from "$lib/wallet/adapters";
-  import { savedAdapter } from "$lib/wallet/stores";
   import { savedNetwork } from "$lib/network/stores";
   import { MAINNET } from "$lib/resources/networks";
+  import { WALLETS, adapterToIWallet } from "$lib/wallet/adapters";
+  import { SonarURI } from "$lib/wallet/adapters/sonar";
+  import type { Connectable, WalletAdapter } from "$lib/wallet/adapters/types";
+  import QR from "$lib/wallet/components/QR.svelte";
+  import IconSonar from "$lib/wallet/icons/IconSonar.svelte";
+  import { savedAdapter } from "$lib/wallet/stores";
   import autoAnimate from "@formkit/auto-animate";
+  import { createDialog, melt } from "@melt-ui/svelte";
+  import { Check, X } from "lucide-svelte";
+  import { writable, type Writable } from "svelte/store";
   import Loading from "./icons/Loading.svelte";
 
   export let open = writable(false);
@@ -107,10 +107,14 @@
             {/if}
           </div>
         {:else}
-          <div class="flex flex-col justify-center items-center w-full xs:py-12">
+          <div
+            class="flex flex-col justify-center items-center w-full xs:py-12"
+          >
             {#await connectPromise}
               {#if $SonarURI !== null}
-                <div class="flex flex-col xs:flex-row w-full h-full items-center gap-4">
+                <div
+                  class="flex flex-col xs:flex-row w-full h-full items-center gap-4"
+                >
                   <div class="basis-1/2">
                     <QR
                       uri={$SonarURI}

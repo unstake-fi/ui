@@ -6,9 +6,9 @@
   import { savedAdapter, signerResolved } from "$lib/wallet/stores";
   import { createPopover, createSync, melt } from "@melt-ui/svelte";
   import { Search } from "lucide-svelte";
+  import { writable } from "svelte/store";
   import { fade } from "svelte/transition";
   import WalletDialog from "./WalletDialog.svelte";
-  import { writable } from "svelte/store";
 
   export let open = false;
 

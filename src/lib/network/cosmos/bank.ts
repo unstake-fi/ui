@@ -1,8 +1,8 @@
 import {
-    type Coin,
-    createProtobufRpcClient,
     QueryClient,
+    createProtobufRpcClient,
     setupBankExtension,
+    type Coin,
 } from "@cosmjs/stargate";
 import type { Metadata } from "cosmjs-types/cosmos/bank/v1beta1/bank";
 import {

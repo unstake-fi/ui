@@ -1,10 +1,10 @@
-import { selectBestRPC, createTMClient, createKujiraClient } from "$lib/network/connect";
+import { browser } from "$app/environment";
+import { createKujiraClient, createTMClient, selectBestRPC } from "$lib/network/connect";
+import { refreshing } from "$lib/refreshing";
+import type { NETWORK } from "$lib/resources/networks";
 import { persisted } from "svelte-persisted-store";
 import { get, writable } from "svelte/store";
-import { refreshing } from "$lib/refreshing";
 import type { KujiraClient, NetworkOptions } from "./types";
-import { browser } from "$app/environment";
-import type { NETWORK } from "$lib/resources/networks";
 
 export const savedNetwork = browser ? persisted<{ chainId: NETWORK }>('network', { chainId: 'kaiyo-1' }) : writable<{ chainId: NETWORK }>({ chainId: 'kaiyo-1' });
 export const savedNetworkOptions = browser ? persisted<NetworkOptions>('network-options', {}) : writable<NetworkOptions>({});

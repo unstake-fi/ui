@@ -1,11 +1,11 @@
-import IconLeap from "../icons/IconLeap.svelte";
 import { CHAIN_INFO, type NETWORK } from "$lib/resources/networks";
 import type { EncodeObject, OfflineSigner } from "@cosmjs/proto-signing";
 import type { StdFee } from "@cosmjs/stargate";
-import type { Keplr, Window as KeplrWindow } from "@keplr-wallet/types";
-import { WalletAdapter, type AccountData, type WalletMetadata, ConnectionError, type ISigner } from "./types";
 import type { TendermintClient } from "@cosmjs/tendermint-rpc";
+import type { Keplr, Window as KeplrWindow } from "@keplr-wallet/types";
+import IconLeap from "../icons/IconLeap.svelte";
 import { convertAccountData, offlineSignerSign } from "./common";
+import { ConnectionError, WalletAdapter, type AccountData, type ISigner, type WalletMetadata } from "./types";
 
 declare global {
     interface Window extends KeplrWindow {

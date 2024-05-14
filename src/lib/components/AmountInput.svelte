@@ -10,8 +10,6 @@
   export let amount: string = "";
   export let max: BigNumber | undefined = undefined;
 
-  let node: HTMLDivElement;
-
   let amountInput: HTMLInputElement;
 
   function handleAmountInput() {
@@ -42,7 +40,6 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
-      bind:this={node}
       class="relative flex flex-row space-x-2 text-left w-full h-full items-stretch px-4 py-2"
       use:autoAnimate={{ duration: 100 }}
     >

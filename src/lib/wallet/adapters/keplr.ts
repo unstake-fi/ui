@@ -1,11 +1,11 @@
-import IconKeplr from "../icons/IconKeplr.svelte";
 import { CHAIN_INFO, type NETWORK } from "$lib/resources/networks";
 import type { EncodeObject, OfflineSigner } from "@cosmjs/proto-signing";
 import type { StdFee } from "@cosmjs/stargate";
-import { WalletAdapter, type AccountData, type WalletMetadata, ConnectionError, type ISigner } from "./types";
 import type { TendermintClient } from "@cosmjs/tendermint-rpc";
-import { convertAccountData, offlineSignerSign } from "./common";
 import type { Window as KeplrWindow } from "@keplr-wallet/types";
+import IconKeplr from "../icons/IconKeplr.svelte";
+import { convertAccountData, offlineSignerSign } from "./common";
+import { ConnectionError, WalletAdapter, type AccountData, type ISigner, type WalletMetadata } from "./types";
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface

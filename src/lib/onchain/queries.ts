@@ -1,9 +1,9 @@
-import { get } from "svelte/store";
-import { refreshing } from "../refreshing";
-import { signer } from "../wallet/stores";
-import { client } from "../network/stores";
-import { Balance, Balances } from "../wallet/coin";
 import { PageRequest } from "cosmjs-types/cosmos/base/query/v1beta1/pagination";
+import { get } from "svelte/store";
+import { client } from "../network/stores";
+import { refreshing } from "../refreshing";
+import { Balance, Balances } from "../wallet/coin";
+import { signer } from "../wallet/stores";
 
 export const balances = refreshing(
     async () => {

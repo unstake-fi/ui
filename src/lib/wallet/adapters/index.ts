@@ -1,7 +1,7 @@
-import { get } from "svelte/store";
-import { WalletAdapter, type Connectable } from "./types";
-import { signer } from "../stores";
 import { browser } from "$app/environment";
+import { get } from "svelte/store";
+import { signer } from "../stores";
+import { WalletAdapter, type Connectable } from "./types";
 
 export async function adapterToIWallet(adapter: WalletAdapter): Promise<Connectable | null> {
     switch (adapter) {

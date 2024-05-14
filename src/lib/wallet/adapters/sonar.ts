@@ -1,17 +1,17 @@
-import IconSonar from "../icons/IconSonar.svelte";
 import type { EncodeObject } from "@cosmjs/proto-signing";
 import type { Account, StdFee } from "@cosmjs/stargate";
 import Client, { SignClient } from "@walletconnect/sign-client";
+import IconSonar from "../icons/IconSonar.svelte";
 
+import { client } from "$lib/network/stores";
+import type { Pubkey } from "@cosmjs/amino";
+import type { TendermintClient } from "@cosmjs/tendermint-rpc";
 import type { SessionTypes } from "@walletconnect/types";
 import { get, writable } from "svelte/store";
-import { protoRegistry } from "../utils";
-import { WalletAdapter, type WalletMetadata, type ISigner, type AccountData } from "./types";
-import type { TendermintClient } from "@cosmjs/tendermint-rpc";
-import type { Pubkey } from "@cosmjs/amino";
-import { validateAccount } from "./common";
 import { savedAdapter } from "../stores";
-import { client } from "$lib/network/stores";
+import { protoRegistry } from "../utils";
+import { validateAccount } from "./common";
+import { WalletAdapter, type AccountData, type ISigner, type WalletMetadata } from "./types";
 
 type Session = SessionTypes.Struct;
 

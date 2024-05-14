@@ -1,8 +1,7 @@
-import type { OfflineAminoSigner, Pubkey } from "@cosmjs/amino";
-import type { EncodeObject, OfflineDirectSigner } from "@cosmjs/proto-signing";
+import type { Pubkey } from "@cosmjs/amino";
+import type { EncodeObject } from "@cosmjs/proto-signing";
 import type { StdFee } from "@cosmjs/stargate";
 import type { TendermintClient } from "@cosmjs/tendermint-rpc";
-import type { KeplrSignOptions, Keplr as KeplrT } from "@keplr-wallet/types";
 import type { Keplr } from "./keplr";
 import type { Leap } from "./leap";
 import type { MetaMask } from "./metamask";

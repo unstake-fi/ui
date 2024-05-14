@@ -1,9 +1,9 @@
 import { NETWORKS } from "$lib/resources/networks";
-import { HttpBatchClient, Tendermint37Client, type StatusResponse } from "@cosmjs/tendermint-rpc";
-import type { KujiraClient } from "./types";
-import { QueryClient, setupAuthExtension, setupAuthzExtension, setupGovExtension, setupStakingExtension, setupTxExtension } from "@cosmjs/stargate";
 import { setupWasmExtension } from "@cosmjs/cosmwasm-stargate";
+import { QueryClient, setupAuthExtension, setupAuthzExtension, setupGovExtension, setupStakingExtension, setupTxExtension } from "@cosmjs/stargate";
+import { HttpBatchClient, Tendermint37Client, type StatusResponse } from "@cosmjs/tendermint-rpc";
 import { setupBankExtensionExtended } from "./cosmos/bank";
+import type { KujiraClient } from "./types";
 
 export async function createTMClient(rpc: string, dispatchInterval: number = 100, batchSizeLimit: number = 200): Promise<[Tendermint37Client, StatusResponse]> {
     const client = await Tendermint37Client.create(

@@ -1,3 +1,6 @@
+import IconFuzn from "$lib/components/icons/IconFUZN.svelte";
+import IconKuji from "$lib/components/icons/IconKUJI.svelte";
+import IconMnta from "$lib/components/icons/IconMNTA.svelte";
 import IconampKuji from "$lib/components/icons/IconampKUJI.svelte";
 import IconampMnta from "$lib/components/icons/IconampMNTA.svelte";
 import IconboneKuji from "$lib/components/icons/IconboneKUJI.svelte";
@@ -5,10 +8,7 @@ import IconqcFuzn from "$lib/components/icons/IconqcFUZN.svelte";
 import IconqcKuji from "$lib/components/icons/IconqcKUJI.svelte";
 import IconqcMnta from "$lib/components/icons/IconqcMNTA.svelte";
 import type { ComponentType } from "svelte";
-import { MAINNET, TESTNET, type NETWORK, POND } from "./networks";
-import IconKuji from "$lib/components/icons/IconKUJI.svelte";
-import IconMnta from "$lib/components/icons/IconMNTA.svelte";
-import IconFuzn from "$lib/components/icons/IconFUZN.svelte";
+import { MAINNET, POND, TESTNET, type NETWORK } from "./networks";
 
 export const MEMO = "Powered by https://unstake.fi";
 

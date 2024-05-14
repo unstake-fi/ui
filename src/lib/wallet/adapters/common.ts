@@ -1,16 +1,16 @@
+import { encodeEd25519Pubkey, encodeSecp256k1Pubkey, type Algo, type Pubkey } from "@cosmjs/amino";
 import type { AccountData as CosmAccountData, EncodeObject, OfflineSigner } from "@cosmjs/proto-signing";
-import { SigningStargateClient, type Account, accountFromAny, type StdFee } from "@cosmjs/stargate";
-import type { TendermintClient } from "@cosmjs/tendermint-rpc";
-import { aminoTypes, protoRegistry } from "../utils";
+import { SigningStargateClient, accountFromAny, type Account, type StdFee } from "@cosmjs/stargate";
+import type { CometClient } from "@cosmjs/tendermint-rpc";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import type { Any } from "cosmjs-types/google/protobuf/any";
-import { encodeSecp256k1Pubkey, type Algo, type Pubkey, encodeEd25519Pubkey } from "@cosmjs/amino";
+import { aminoTypes, protoRegistry } from "../utils";
 import type { AccountData } from "./types";
 
 export async function offlineSignerSign(
     signer: OfflineSigner,
     address: string,
-    client: TendermintClient,
+    client: CometClient,
     msgs: EncodeObject[],
     fee: StdFee,
     memo?: string

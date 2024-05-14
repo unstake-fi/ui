@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type { DeliverTxResponse } from "@cosmjs/stargate";
-  import { createDialog, melt, type CreateDialogProps } from "@melt-ui/svelte";
-  import { scale } from "svelte/transition";
-  import autoAnimate from "@formkit/auto-animate";
-  import { writable, type Readable } from "svelte/store";
-  import TxProgressItem from "./TxProgressItem.svelte";
-  import { Search, X } from "lucide-svelte";
-  import { NETWORKS } from "$lib/resources/networks";
   import { savedNetwork } from "$lib/network/stores";
   import { TxStep } from "$lib/onchain/transaction";
+  import { NETWORKS } from "$lib/resources/networks";
+  import type { DeliverTxResponse } from "@cosmjs/stargate";
+  import autoAnimate from "@formkit/auto-animate";
+  import { createDialog, melt, type CreateDialogProps } from "@melt-ui/svelte";
+  import { Search, X } from "lucide-svelte";
+  import { writable, type Readable } from "svelte/store";
+  import { scale } from "svelte/transition";
+  import TxProgressItem from "./TxProgressItem.svelte";
 
   export let status: Readable<TxStep>;
   export let txPromise: Promise<DeliverTxResponse> | undefined;
