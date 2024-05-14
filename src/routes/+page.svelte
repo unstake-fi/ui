@@ -1,6 +1,7 @@
 <script lang="ts">
   import DenomSelect from "$lib/components/DenomSelect.svelte";
   import NumberInput from "$lib/components/NumberInput.svelte";
+  import TxProgress from "$lib/components/TxProgress.svelte";
   import WalletInfo from "$lib/components/WalletInfo.svelte";
   import Loading from "$lib/components/icons/Loading.svelte";
   import { client, savedNetwork } from "$lib/network/stores";
@@ -10,7 +11,7 @@
     ControllerStatus,
     Offer,
   } from "$lib/onchain/queryTypes";
-  import { TxStep, simulate, broadcastTx } from "$lib/onchain/transaction";
+  import { TxStep, broadcastTx, simulate } from "$lib/onchain/transaction";
   import { refreshing, statusOf } from "$lib/refreshing";
   import { DENOMS } from "$lib/resources/denoms";
   import { msg } from "$lib/resources/msg";
@@ -22,11 +23,11 @@
   } from "$lib/resources/registry";
   import { Balance } from "$lib/wallet/coin";
   import { signer } from "$lib/wallet/stores";
-  import { formatBigNumber, calculateFee } from "$lib/wallet/utils";
+  import { calculateFee, formatBigNumber } from "$lib/wallet/utils";
   import { GasPrice, type DeliverTxResponse } from "@cosmjs/stargate";
   import autoAnimate from "@formkit/auto-animate";
   import { BigNumber } from "bignumber.js";
-  import { ChevronsDown, OctagonX, TriangleAlert } from "lucide-svelte";
+  import { ChevronsDown, Fuel, OctagonX, TriangleAlert } from "lucide-svelte";
   import { getContext } from "svelte";
   import { derived, get, writable, type Writable } from "svelte/store";
 
@@ -126,7 +127,6 @@
 
   const msgs = refreshing(
     async () => {
-      let $client = await get(client);
       let $signer = await get(signer);
       let $balances = await get(balances);
       let $offer = await get(offer);
@@ -134,15 +134,11 @@
       const controllerAddr = $selectedConfig.address;
       if (!controllerAddr) return null;
       if ($amountRaw.isZero()) return null;
-      if (
-        $amountRaw.gt(
-          $balances.getOrZero($selectedConfig.askDenom).normalized()
-        )
-      )
+      if ($amountRaw.gt($balances.getOrZero($selectedConfig.askDenom).amount))
         return null;
 
-      const unstakeBal = Balance.fromHuman(
-        $amountRaw.toFixed(),
+      const unstakeBal = Balance.fromAmountDenom(
+        $amountRaw.toFixed(0),
         $selectedConfig.askDenom
       );
       const msgs = [
@@ -152,7 +148,7 @@
           msg: Buffer.from(
             JSON.stringify({
               unstake: {
-                max_fee: $offer.fee.amount.toFixed(),
+                max_fee: $offer.fee.amount.toFixed(0),
               },
             })
           ),
@@ -199,6 +195,22 @@
     }
   };
 
+  const tryParseError = (err: any) => {
+    let message = err.toString?.();
+    if (message) {
+      if (message.includes("Vault") && message.includes("insolvent")) {
+        return "Unstake Protocol has insufficient liquidity to fulfill this request.";
+      }
+      if (
+        message.includes("spendable balance") &&
+        message.includes("smaller than")
+      ) {
+        return "Your wallet balance is too low to fulfill this request.";
+      }
+    }
+    return err;
+  };
+
   const estimatedFee = refreshing(
     async () => {
       const s = await get(txSim);
@@ -226,6 +238,8 @@
     });
   }
 </script>
+
+<TxProgress {status} {txPromise} />
 
 <div class="mt-20">
   <div class="mx-auto max-w-prose">
@@ -358,7 +372,7 @@
             </div>
           {:then offer}
             {#if offer}
-              <p class="py-4 text-lg flex-grow text-stone-400">
+              <p class="py-4 text-lg flex-grow text-stone-200">
                 {offer.amount.humanAmount(4)}
               </p>
             {:else}
@@ -401,44 +415,85 @@
           </div>
         </div>
       </div>
-      {#if $maxSelectedDenom && new BigNumber($amount).gt($maxSelectedDenom)}
-        <div class="flex items-center gap-1 text-red-500 mt-1">
-          <OctagonX class="w-4 h-4 inline-block" />
-          <p class="text-xs">
-            Input amount exceeds available balance
-            <span class="text-stone-500">
-              ({formatBigNumber($maxSelectedDenom, 2)})
-            </span>
-          </p>
-        </div>
-      {/if}
-      {#if $feeFraction && $feeFraction.gt(0.05)}
-        <div class="flex items-center gap-1 text-amber-500 mt-1">
-          <TriangleAlert class="w-4 h-4 inline-block" />
-          <p class="text-xs">
-            High slippage
-            <span class="text-stone-500">
-              ({formatBigNumber($feeFraction.times(100), 2)}%)
-            </span>
-          </p>
-        </div>
-      {/if}
-      <div
-        class="flex justify-between my-2 gap-2 text-sm text-stone-400 items-center"
-      >
+      <div use:autoAnimate>
+        {#if $maxSelectedDenom && new BigNumber($amount).gt($maxSelectedDenom)}
+          <div class="flex items-center gap-1 text-red-500 mt-1">
+            <OctagonX class="w-4 h-4 inline-block" />
+            <p class="text-xs">
+              Input amount exceeds available balance
+              <span class="text-stone-500">
+                ({formatBigNumber($maxSelectedDenom, 2)})
+              </span>
+            </p>
+          </div>
+        {/if}
+        {#if $feeFraction && $feeFraction.gt(0.05)}
+          <div class="flex items-center gap-1 text-amber-500 mt-1">
+            <TriangleAlert class="w-4 h-4 inline-block" />
+            <p class="text-xs">
+              High slippage
+              <span class="text-stone-500">
+                ({formatBigNumber($feeFraction.times(100), 2)}%)
+              </span>
+            </p>
+          </div>
+        {/if}
+        {#await $estimatedFee then fee}
+          <div class="flex items-center gap-1 text-stone-500 mt-1">
+            <Fuel class="w-4 h-4 inline-block" />
+            <p class="text-xs">
+              {fee.display(4)} estimated fee
+            </p>
+          </div>
+        {/await}
+      </div>
+      <div class="flex justify-between my-2 gap-2 items-center">
         <button
-          class="flex-grow border border-stone-500 bg-stone-700 hover:bg-gradient-to-tr from-red-700 via-red-500 to-amber-500 px-4 py-2 rounded-md my-2 text-stone-200 hover:border-stone-400"
+          class={`flex-grow border border-stone-500 bg-stone-700 from-red-700 via-red-500 to-amber-500 px-4 py-2 rounded-md my-2 text-stone-200 hover:border-stone-400 ${
+            $txSimStatus !== "success" ? "cursor-not-allowed" : ""
+          }`}
+          disabled={$txSimStatus !== "success"}
+          on:click={() => (txPromise = executeUnstake())}
           id="submit"
         >
           <label
             for="submit"
-            class="flex items-center justify-center cursor-pointer"
+            class="flex items-center justify-center pointer-events-none gap-1"
           >
-            <p class="text-base">Unstake</p>
+            {#await $txSim}
+              <Loading class="w-6 h-6 fill-stone-400" />
+            {:then _}
+              <p>Unstake</p>
+            {:catch err}
+              {#if showError(err)}
+                <OctagonX class="w-6 h-6 text-red-500" />
+                <p class="text-red-500">Error Simulating Transaction</p>
+              {:else}
+                <p>Unstake</p>
+              {/if}
+            {/await}
           </label>
         </button>
         <WalletInfo />
       </div>
+      {#await $txSim catch err}
+        {#if showError(err)}
+          <div
+            class="text-neutral-300 text-xs border border-red-500 bg-red-500/50 rounded-md p-2"
+          >
+            <p>{tryParseError(err)}</p>
+          </div>
+        {/if}
+      {/await}
     </div>
   </div>
 </div>
+
+<style>
+  #submit:disabled {
+    @apply text-stone-400 opacity-50;
+  }
+  #submit:not(:disabled) {
+    @apply hover:bg-gradient-to-tr;
+  }
+</style>
