@@ -2,12 +2,13 @@
   import { setupEventListeners } from "$lib/wallet/adapters";
   import { writable } from "svelte/store";
   import "../app.css";
-  import { browser } from "$app/environment";
+  import { browser, dev } from "$app/environment";
   import { page } from "$app/stores";
   import { CONTROLLERS } from "$lib/resources/registry";
   import { savedNetwork } from "$lib/network/stores";
   import { goto } from "$app/navigation";
   import { setContext } from "svelte";
+  import { env } from "$env/dynamic/private";
 
   setupEventListeners();
 
@@ -15,7 +16,9 @@
   const defaultController = controllers.length >= 3 ? controllers[2] : null;
 
   const controller = writable(
-    browser ? $page.url.searchParams.get("controller") ?? defaultController : defaultController
+    browser
+      ? $page.url.searchParams.get("controller") ?? defaultController
+      : defaultController
   );
   $: {
     if (browser && $controller) {
@@ -26,6 +29,17 @@
   }
   setContext("controller", controller);
 </script>
+
+<svelte:head>
+  {#if !dev}
+    <script
+      async
+      defer
+      data-website-id={env.ANALYTICS_ID}
+      src={env.ANALYTICS_URL}
+    ></script>
+  {/if}
+</svelte:head>
 
 <slot />
 
