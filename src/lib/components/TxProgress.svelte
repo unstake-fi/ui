@@ -145,7 +145,7 @@
                   class="border border-red-500 rounded-md p-2 bg-red-500/20 w-full"
                 >
                   <p class="text-stone-200 text-xs break-words">
-                    {res}
+                    {res.message ? res.message : res}
                   </p>
                 </div>
               {/if}
@@ -165,7 +165,7 @@
                 </a>
               {/if}
             {:catch err}
-              {#if err.code}<a
+              {#if err.transactionHash}<a
                   class="text-sm text-red-500 flex items-center space-x-1"
                   href="{NETWORKS[$savedNetwork.chainId]
                     .explorer}/tx/{err.transactionHash}"
