@@ -8,7 +8,10 @@
   import { savedNetwork } from "$lib/network/stores";
   import { goto } from "$app/navigation";
   import { setContext } from "svelte";
-  import { env } from "$env/dynamic/private";
+  import {
+    PUBLIC_ANALYTICS_ID,
+    PUBLIC_ANALYTICS_URL,
+  } from "$env/static/public";
 
   setupEventListeners();
 
@@ -35,8 +38,8 @@
     <script
       async
       defer
-      data-website-id={env.ANALYTICS_ID}
-      src={env.ANALYTICS_URL}
+      data-website-id={PUBLIC_ANALYTICS_ID}
+      src={PUBLIC_ANALYTICS_URL}
     ></script>
   {/if}
 </svelte:head>
