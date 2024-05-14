@@ -36,14 +36,14 @@
 
 {#if isConnected}
   <button
-    class="button flex items-center gap-1 bg-neutral-800 rounded-md px-4 py-2"
+    class="button flex items-center xs:gap-1 bg-neutral-800 rounded-md px-4 py-2"
     use:melt={$trigger}
   >
     <svelte:component
       this={$signerResolved?.getMetadata().logo}
-      class="w-6 h-6 mr-1"
+      class="w-6 h-6"
     />
-    <p class="text-xs text-left text-neutral-200">
+    <p class="text-xs text-left text-neutral-200 hidden xs:inline">
       {displayAddr($signerResolved?.account().address, 10)}
     </p>
   </button>
@@ -57,7 +57,7 @@
       for="connect"
       class="flex items-center justify-center text-amber-300/80 cursor-pointer"
     >
-      <p class="text-base">Connect Wallet</p>
+      <p class="text-sm xs:text-base">Connect Wallet</p>
     </label>
   </button>
 {/if}

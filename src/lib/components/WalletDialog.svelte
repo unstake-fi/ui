@@ -13,16 +13,6 @@
   import autoAnimate from "@formkit/auto-animate";
   import Loading from "./icons/Loading.svelte";
 
-  //   const handleOpen: CreateDialogProps["onOpenChange"] = ({ curr, next }) => {
-  //     if (!next) {
-  //       SonarURI.set(null);
-  //     }
-  //     if (!$SonarURI && next) {
-  //       return false;
-  //     }
-  //     return next;
-  //   };
-
   export let open = writable(false);
 
   const {
@@ -117,10 +107,10 @@
             {/if}
           </div>
         {:else}
-          <div class="flex flex-col justify-center items-center w-full py-12">
+          <div class="flex flex-col justify-center items-center w-full xs:py-12">
             {#await connectPromise}
               {#if $SonarURI !== null}
-                <div class="flex flex-row w-full h-full items-center gap-4">
+                <div class="flex flex-col xs:flex-row w-full h-full items-center gap-4">
                   <div class="basis-1/2">
                     <QR
                       uri={$SonarURI}
@@ -135,7 +125,7 @@
                   </div>
                   <div class="flex flex-col gap-4 basis-1/2 items-start">
                     <svg
-                      class="h-16"
+                      class="h-16 hidden xs:visible"
                       viewBox="0 0 467 141"
                       version="1.1"
                       xmlns="http://www.w3.org/2000/svg"
@@ -271,7 +261,7 @@
 
 <style lang="postcss">
   .content {
-    @apply m-0 p-6 pt-8 fixed z-50 min-w-96;
+    @apply m-0 p-6 pt-8 fixed z-50 xs:min-w-96;
     top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);

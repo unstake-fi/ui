@@ -27,10 +27,10 @@
   >
     <svelte:component this={networkMeta.icon} class="w-4 h-4" />
     <p
-      class="overflow-hidden overflow-ellipsis whitespace-nowrap flex-shrink hidden sm:block"
+      class="overflow-hidden overflow-ellipsis whitespace-nowrap flex-shrink"
     >
       {networkMeta.name}
-      <span class="text-gray-400">({networkMeta.chainId})</span>
+      <span class="text-stone-500">({networkMeta.chainId})</span>
     </p>
     <ChevronDown class="w-4 h-4" />
   </button>

@@ -27,7 +27,14 @@
   import { GasPrice, type DeliverTxResponse } from "@cosmjs/stargate";
   import autoAnimate from "@formkit/auto-animate";
   import { BigNumber } from "bignumber.js";
-  import { ChevronsDown, Fuel, OctagonX, TriangleAlert } from "lucide-svelte";
+  import {
+    ChevronsDown,
+    ExternalLink,
+    Fuel,
+    Info,
+    OctagonX,
+    TriangleAlert,
+  } from "lucide-svelte";
   import { getContext } from "svelte";
   import { derived, get, writable, type Writable } from "svelte/store";
 
@@ -239,12 +246,18 @@
   }
 </script>
 
+<svelte:head>
+  <title>UNSTAKE.FI</title>
+</svelte:head>
+
 <TxProgress {status} {txPromise} />
 
-<div class="mt-20">
+<div class="mt-10 xs:mt-20 mx-4">
   <div class="mx-auto max-w-prose">
     <img src="/unstake-name.svg" class="h-20" alt="Unstake.fi Logo" />
-    <h1 class="text-slate-100 mt-8 mb-2 text-center text-4xl font-light">
+    <h1
+      class="text-slate-100 mt-4 xs:mt-8 mb-4 xs:mb-8 text-center text-4xl font-light"
+    >
       Don't Wait. <span
         class="bg-gradient-to-tr from-red-600 via-red-500 to-amber-500 text-transparent bg-clip-text font-semibold"
       >
@@ -252,96 +265,155 @@
       </span>
     </h1>
 
-    <div class="mt-8 items-center">
-      <div
-        class={`bg-neutral-800 rounded-md px-4 py-2 text-stone-200 w-full ${
-          $maxSelectedDenom && new BigNumber($amount).gt($maxSelectedDenom)
-            ? "border border-red-500"
-            : ""
-        }`}
-        use:autoAnimate={{ duration: 100 }}
+    <div
+      class={`bg-neutral-800 rounded-md px-4 py-2 text-stone-200 w-full ${
+        $maxSelectedDenom && new BigNumber($amount).gt($maxSelectedDenom)
+          ? "border border-red-500"
+          : ""
+      }`}
+      use:autoAnimate={{ duration: 100 }}
+    >
+      <label
+        for="unbondAmount"
+        class="block text-sm font-semibold leading-6 text-stone-400"
       >
-        <label
-          for="unbondAmount"
-          class="block text-sm font-semibold leading-6 text-stone-400"
+        You unstake
+      </label>
+      <div class="flex flex-row items-center">
+        <NumberInput
+          bind:value={$amount}
+          id="unbondAmount"
+          class="bg-inherit pt-2 pb-2 text-lg focus:outline-none flex-grow min-w-0"
+        />
+        <DenomSelect
+          items={Object.values(allControllers)}
+          meta={denomMeta}
+          bind:active={$denomInputController}
+          class="bg-neutral-800 text-left text-stone-200"
+        />
+      </div>
+      <div class="flex justify-between">
+        <div
+          class="flex flex-col gap-0.5 text-xs text-stone-300"
+          use:autoAnimate
         >
-          You unstake
-        </label>
-        <div class="flex flex-row items-center">
-          <NumberInput
-            bind:value={$amount}
-            id="unbondAmount"
-            class="bg-inherit pt-2 pb-2 text-lg focus:outline-none flex-grow"
-          />
-          <DenomSelect
-            items={Object.values(allControllers)}
-            meta={denomMeta}
-            bind:active={$denomInputController}
-            class="bg-neutral-800 text-left text-stone-200"
-          />
-        </div>
-        <div class="flex justify-between">
-          <div
-            class="flex flex-col gap-0.5 text-xs text-stone-300"
-            use:autoAnimate
-          >
-            <div class="flex items-center">
-              <p class="text-stone-500">Available:</p>
-              {#if $maxSelectedDenom !== undefined}
-                <button
-                  class="ml-1 hover:text-amber-300"
-                  on:click={(_) => ($amount = $maxSelectedDenom.toFixed())}
-                  use:autoAnimate
-                >
-                  {formatBigNumber($maxSelectedDenom, 2)}
-                </button>
-              {:else}
-                <p class="ml-1 text-red-500">0.00</p>
-              {/if}
-            </div>
+          <div class="flex items-center">
+            <p class="text-stone-500">Available:</p>
             {#if $maxSelectedDenom !== undefined}
-              <div class="flex items-center gap-1">
-                <button
-                  class="border border-amber-600 bg-red-800/50 px-1 -ml-0.5 rounded-md hover:text-amber-300 hover:bg-red-700/50"
-                  on:click={(_) => ($amount = $maxSelectedDenom.toFixed())}
-                >
-                  100%
-                </button>
-                <button
-                  class="border border-amber-600 bg-red-800/50 px-1 rounded-md hover:text-amber-300 hover:bg-red-700/50"
-                  on:click={(_) =>
-                    ($amount = $maxSelectedDenom.div(2).toFixed())}
-                >
-                  50%
-                </button>
-                <button
-                  class="border border-amber-600 bg-red-800/50 px-1 rounded-md hover:text-amber-300 hover:bg-red-700/50"
-                  on:click={(_) =>
-                    ($amount = $maxSelectedDenom.div(4).toFixed())}
-                >
-                  25%
-                </button>
-                <button
-                  class="border border-amber-600 bg-red-800/50 px-1 rounded-md hover:text-amber-300 hover:bg-red-700/50"
-                  on:click={(_) => ($amount = "0")}
-                >
-                  0%
-                </button>
-              </div>
+              <button
+                class="ml-1 hover:text-amber-300"
+                on:click={(_) => ($amount = $maxSelectedDenom.toFixed())}
+                use:autoAnimate
+              >
+                {formatBigNumber($maxSelectedDenom, 2)}
+              </button>
+            {:else}
+              <p class="ml-1 text-red-500">0.00</p>
             {/if}
           </div>
-          <div class="flex flex-col items-end mr-1">
-            <p class="text-xs text-stone-500 -mb-1 mt-1">Protocol Rate</p>
-            {#await $controllerInfo}
+          {#if $maxSelectedDenom !== undefined}
+            <div class="flex items-center gap-1">
+              <button
+                class="-ml-0.5 percentage-button"
+                on:click={(_) => ($amount = $maxSelectedDenom.toFixed())}
+              >
+                100%
+              </button>
+              <button
+                class="percentage-button"
+                on:click={(_) => ($amount = $maxSelectedDenom.div(2).toFixed())}
+              >
+                50%
+              </button>
+              <button
+                class="percentage-button hidden xs:block"
+                on:click={(_) => ($amount = $maxSelectedDenom.div(4).toFixed())}
+              >
+                25%
+              </button>
+              <button
+                class="percentage-button hidden xs:block"
+                on:click={(_) => ($amount = "0")}
+              >
+                0%
+              </button>
+            </div>
+          {/if}
+        </div>
+        <div class="flex flex-col items-end mr-1">
+          <p class="text-xs text-stone-500 -mb-1 mt-1">Protocol Rate</p>
+          {#await $controllerInfo}
+            <p class="text-sm">-</p>
+          {:then res}
+            {#if res && $selectedConfig}
+              {@const [_, rates] = res}
+              <p class="text-sm">
+                {Balance.fromHuman(
+                  rates.provider_redemption,
+                  $selectedConfig.offerDenom
+                ).display(4)}
+              </p>
+            {:else}
               <p class="text-sm">-</p>
-            {:then res}
-              {#if res && $selectedConfig}
-                {@const [_, rates] = res}
+            {/if}
+          {:catch _}
+            <p class="text-sm text-red-500">-</p>
+          {/await}
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-center w-full">
+      <div class="p-2 -my-3.5 bg-stone-950 rounded-md z-10">
+        <ChevronsDown class="w-5 h-5 text-stone-400" />
+      </div>
+    </div>
+    <div
+      class={`bg-neutral-800 rounded-md px-4 py-2 text-stone-200 w-full ${
+        $feeFraction && $feeFraction.gt(0.05) ? "border border-amber-500" : ""
+      }`}
+    >
+      <p class="block text-sm font-semibold leading-6 text-stone-400">
+        You receive
+      </p>
+      <div class="flex flex-row items-center">
+        {#await $offer}
+          <div class="py-4 flex-grow">
+            <Loading class="w-7 h-7 fill-stone-400" />
+          </div>
+        {:then offer}
+          {#if offer}
+            <p class="py-4 flex-grow text-stone-200">
+              {offer.amount.humanAmount(4)}
+            </p>
+          {:else}
+            <p class="py-4 text-lg flex-grow text-stone-400">-</p>
+          {/if}
+        {:catch e}
+          <p class="py-4 text-lg flex-grow text-red-500">-</p>
+        {/await}
+
+        <div class="flex flex-col">
+          <div
+            class="flex space-x-2 items-center h-full text-stone-200 px-4 rounded-md"
+          >
+            {#if $selectedConfig !== null}
+              <svelte:component
+                this={ICONS[$selectedConfig.offerDenom]}
+                class="w-6 h-6"
+              />
+              <p>{DENOMS[$selectedConfig.offerDenom].name}</p>
+            {/if}
+          </div>
+
+          <div class="flex flex-col items-end mr-1">
+            <p class="text-xs text-stone-500 -mb-1 mt-1">Unstake Rate</p>
+            {#await $offerRate}
+              <p class="text-sm">-</p>
+            {:then offerRate}
+              {#if offerRate && $selectedConfig}
                 <p class="text-sm">
-                  {Balance.fromHuman(
-                    rates.provider_redemption,
-                    $selectedConfig.offerDenom
-                  ).display(4)}
+                  {offerRate.toFixed(4)}
+                  {Balance.fromHuman("0", $selectedConfig.offerDenom).name}
                 </p>
               {:else}
                 <p class="text-sm">-</p>
@@ -352,144 +424,134 @@
           </div>
         </div>
       </div>
-      <div class="flex justify-center w-full">
-        <div class="p-2 -my-3.5 bg-stone-950 rounded-md z-10">
-          <ChevronsDown class="w-5 h-5 text-stone-400" />
+    </div>
+    <div use:autoAnimate>
+      {#if $maxSelectedDenom && new BigNumber($amount).gt($maxSelectedDenom)}
+        <div class="flex items-center gap-1 text-red-500 mt-1">
+          <OctagonX class="w-4 h-4 inline-block" />
+          <p class="text-xs">
+            Input amount exceeds available balance
+            <span class="text-stone-500">
+              ({formatBigNumber($maxSelectedDenom, 2)})
+            </span>
+          </p>
         </div>
-      </div>
-      <div
-        class={`bg-neutral-800 rounded-md px-4 py-2 text-stone-200 w-full ${
-          $feeFraction && $feeFraction.gt(0.05) ? "border border-amber-500" : ""
-        }`}
-      >
-        <p class="block text-sm font-semibold leading-6 text-stone-400">
-          You receive
-        </p>
-        <div class="flex flex-row items-center">
-          {#await $offer}
-            <div class="py-4 flex-grow">
-              <Loading class="w-7 h-7 fill-stone-400" />
-            </div>
-          {:then offer}
-            {#if offer}
-              <p class="py-4 text-lg flex-grow text-stone-200">
-                {offer.amount.humanAmount(4)}
-              </p>
-            {:else}
-              <p class="py-4 text-lg flex-grow text-stone-400">-</p>
-            {/if}
-          {:catch e}
-            <p class="py-4 text-lg flex-grow text-red-500">-</p>
-          {/await}
-
-          <div class="flex flex-col">
-            <div
-              class="flex space-x-2 items-center h-full text-stone-200 px-4 rounded-md"
-            >
-              {#if $selectedConfig !== null}
-                <svelte:component
-                  this={ICONS[$selectedConfig.offerDenom]}
-                  class="w-6 h-6"
-                />
-                <p>{DENOMS[$selectedConfig.offerDenom].name}</p>
-              {/if}
-            </div>
-
-            <div class="flex flex-col items-end mr-1">
-              <p class="text-xs text-stone-500 -mb-1 mt-1">Unstake Rate</p>
-              {#await $offerRate}
-                <p class="text-sm">-</p>
-              {:then offerRate}
-                {#if offerRate && $selectedConfig}
-                  <p class="text-sm">
-                    {offerRate.toFixed(4)}
-                    {Balance.fromHuman("0", $selectedConfig.offerDenom).name}
-                  </p>
-                {:else}
-                  <p class="text-sm">-</p>
-                {/if}
-              {:catch _}
-                <p class="text-sm text-red-500">-</p>
-              {/await}
-            </div>
-          </div>
+      {/if}
+      {#if $feeFraction && $feeFraction.gt(0.05)}
+        <div class="flex items-center gap-1 text-amber-500 mt-1">
+          <TriangleAlert class="w-4 h-4 inline-block" />
+          <p class="text-xs">
+            High slippage
+            <span class="text-stone-500">
+              ({formatBigNumber($feeFraction.times(100), 2)}%)
+            </span>
+          </p>
         </div>
-      </div>
-      <div use:autoAnimate>
-        {#if $maxSelectedDenom && new BigNumber($amount).gt($maxSelectedDenom)}
-          <div class="flex items-center gap-1 text-red-500 mt-1">
-            <OctagonX class="w-4 h-4 inline-block" />
-            <p class="text-xs">
-              Input amount exceeds available balance
-              <span class="text-stone-500">
-                ({formatBigNumber($maxSelectedDenom, 2)})
-              </span>
-            </p>
-          </div>
-        {/if}
-        {#if $feeFraction && $feeFraction.gt(0.05)}
-          <div class="flex items-center gap-1 text-amber-500 mt-1">
-            <TriangleAlert class="w-4 h-4 inline-block" />
-            <p class="text-xs">
-              High slippage
-              <span class="text-stone-500">
-                ({formatBigNumber($feeFraction.times(100), 2)}%)
-              </span>
-            </p>
-          </div>
-        {/if}
-        {#await $estimatedFee then fee}
-          <div class="flex items-center gap-1 text-stone-500 mt-1">
-            <Fuel class="w-4 h-4 inline-block" />
-            <p class="text-xs">
-              {fee.display(4)} estimated fee
-            </p>
-          </div>
-        {/await}
-      </div>
-      <div class="flex justify-between my-2 gap-2 items-center">
-        <button
-          class={`flex-grow border border-stone-500 bg-stone-700 from-red-700 via-red-500 to-amber-500 px-4 py-2 rounded-md my-2 text-stone-200 hover:border-stone-400 ${
-            $txSimStatus !== "success" ? "cursor-not-allowed" : ""
-          }`}
-          disabled={$txSimStatus !== "success"}
-          on:click={() => (txPromise = executeUnstake())}
-          id="submit"
-        >
-          <label
-            for="submit"
-            class="flex items-center justify-center pointer-events-none gap-1"
-          >
-            {#await $txSim}
-              <Loading class="w-6 h-6 fill-stone-400" />
-            {:then _}
-              <p>Unstake</p>
-            {:catch err}
-              {#if showError(err)}
-                <OctagonX class="w-6 h-6 text-red-500" />
-                <p class="text-red-500">Error Simulating Transaction</p>
-              {:else}
-                <p>Unstake</p>
-              {/if}
-            {/await}
-          </label>
-        </button>
-        <WalletInfo />
-      </div>
-      {#await $txSim catch err}
-        {#if showError(err)}
-          <div
-            class="text-neutral-300 text-xs border border-red-500 bg-red-500/50 rounded-md p-2"
-          >
-            <p>{tryParseError(err)}</p>
-          </div>
-        {/if}
+      {/if}
+      {#await $estimatedFee then fee}
+        <div class="flex items-center gap-1 text-stone-500 mt-1">
+          <Fuel class="w-4 h-4 inline-block" />
+          <p class="text-xs">
+            {fee.display(4)} estimated fee
+          </p>
+        </div>
       {/await}
     </div>
+    <div class="flex justify-between my-2 gap-2 items-center">
+      <button
+        class={`flex-grow border border-stone-500 bg-stone-700 from-red-700 via-red-500 to-amber-500 px-4 py-2 rounded-md my-2 text-stone-200 hover:border-stone-400 ${
+          $txSimStatus !== "success" ? "cursor-not-allowed" : ""
+        }`}
+        disabled={$txSimStatus !== "success"}
+        on:click={() => (txPromise = executeUnstake())}
+        id="submit"
+      >
+        <label
+          for="submit"
+          class="flex items-center justify-center pointer-events-none gap-1 text-sm xs:text-base"
+        >
+          {#await $txSim}
+            <Loading class="w-6 h-6 fill-stone-400" />
+          {:then _}
+            <p>Unstake</p>
+          {:catch err}
+            {#if showError(err)}
+              <OctagonX class="w-6 h-6 text-red-500" />
+              <p class="text-red-500">Error Simulating Transaction</p>
+            {:else}
+              <p>Unstake</p>
+            {/if}
+          {/await}
+        </label>
+      </button>
+      <WalletInfo />
+    </div>
+    {#await $txSim catch err}
+      {#if showError(err)}
+        <div
+          class="text-neutral-300 text-xs border border-red-500 bg-red-500/50 rounded-md p-2"
+        >
+          <p>{tryParseError(err)}</p>
+        </div>
+      {/if}
+    {/await}
+    {#await $controllerInfo then res}
+      {#if res && $selectedConfig}
+        {@const [status, rates] = res}
+        <div
+          class="border border-stone-500 rounded-md flex flex-col gap-2 p-2 text-xs"
+        >
+          <div class="flex justify-between">
+            <p class="text-stone-500">Reserves Available</p>
+            <a
+              class="flex items-center gap-1 hover:text-red-400"
+              href="https://twitter.com/unstake_fi/status/1721892391664361835"
+              target="_blank"
+            >
+              <span>
+                {Balance.fromAmountDenom(
+                  status.reserve_available,
+                  $selectedConfig.offerDenom
+                ).display(4)}
+              </span>
+              <ExternalLink class="w-4 h-4 inline-block text-stone-400" />
+            </a>
+          </div>
+          <div class="flex justify-between">
+            <p class="text-stone-500">Reserves In Use</p>
+            <a
+              class="flex items-center gap-1 hover:text-red-400"
+              href="https://twitter.com/unstake_fi/status/1721892391664361835"
+              target="_blank"
+            >
+              <span>
+                {Balance.fromAmountDenom(
+                  status.reserve_deployed,
+                  $selectedConfig.offerDenom
+                ).display(4)}
+              </span>
+              <ExternalLink class="w-4 h-4 inline-block text-stone-400" />
+            </a>
+          </div>
+          <div class="flex justify-between">
+            <p class="text-stone-500">Total Unstaked</p>
+            <p class="text-stone-200">
+              {Balance.fromAmountDenom(
+                status.total_base,
+                $selectedConfig.askDenom
+              ).display(4)}
+            </p>
+          </div>
+        </div>
+      {/if}
+    {/await}
   </div>
 </div>
 
 <style>
+  .percentage-button {
+    @apply border border-amber-600 bg-red-800/50 px-1 rounded-md hover:text-amber-300 hover:bg-red-700/50;
+  }
   #submit:disabled {
     @apply text-stone-400 opacity-50;
   }

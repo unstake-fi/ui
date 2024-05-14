@@ -60,26 +60,28 @@
       }}
     >
       {#if open}
-        <div class="absolute w-full h-full px-4 py-2">
+        <div class="absolute w-full h-full px-2 xs:px-4 xs:py-2">
           <input
             bind:this={assetInput}
             bind:value={search}
-            class="focus:outline-none bg-transparent w-full h-full"
+            class="focus:outline-none bg-transparent w-full h-full text-sm xs:text-base"
           />
         </div>
       {/if}
       {#if active}
-        <div class="mx-4 my-2 flex flex-row items-stretch h-full">
+        <div
+          class="mx-2 my-1 xs:mx-4 xs:my-2 flex flex-row items-stretch h-full"
+        >
           <div class:invisible={open} class="flex items-center">
             {#if meta.icon(active)}
               <div class="mr-2">
-                <div class="h-6 w-6">
+                <div class="w-5 h-5 xs:h-6 xs:w-6">
                   <svelte:component this={meta.icon(active)} />
                 </div>
               </div>
             {/if}
-            <p>{meta.label(active) ?? ""}</p>
-            <ChevronDown class="w-4 h-4 ml-1 -mr-1" />
+            <p class="text-sm xs:text-base">{meta.label(active) ?? ""}</p>
+            <ChevronDown class="w-4 h-4 xs:ml-1 -mr-1" />
           </div>
         </div>
       {/if}
@@ -107,18 +109,20 @@
               <div class="flex items-center">
                 {#if meta.icon(m)}
                   <div class="mr-2">
-                    <div class="h-6 w-6">
+                    <div class="w-5 h-5 xs:h-6 xs:w-6">
                       <svelte:component this={meta.icon(m)} />
                     </div>
                   </div>
                 {/if}
-                <p>
+                <p class="text-sm xs:text-base">
                   {meta.label(m)}
                 </p>
               </div>
             </div>
           {:else}
-            <div class="menu-item"><p>No items found</p></div>
+            <div class="menu-item text-xs xs:text-sm">
+              <p>No items found</p>
+            </div>
           {/each}
         </div>
       </div>
@@ -130,6 +134,5 @@
   .menu-item {
     @apply flex justify-between cursor-pointer items-center pl-2 py-2 h-8;
     @apply hover:bg-neutral-700 text-gray-400 hover:text-white;
-    /* @apply transition-all duration-100; */
   }
 </style>
