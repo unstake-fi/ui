@@ -8,10 +8,12 @@
   import { savedNetwork } from "$lib/network/stores";
   import { goto } from "$app/navigation";
   import { setContext } from "svelte";
-  import {
-    PUBLIC_ANALYTICS_ID,
-    PUBLIC_ANALYTICS_URL,
-  } from "$env/static/public";
+  if (!dev) {
+    import {
+      PUBLIC_ANALYTICS_ID,
+      PUBLIC_ANALYTICS_URL,
+    } from "$env/static/public";
+  }
 
   setupEventListeners();
 
