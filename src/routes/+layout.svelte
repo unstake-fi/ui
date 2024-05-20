@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { setupEventListeners } from "$lib/wallet/adapters";
   import { writable } from "svelte/store";
   import "../app.css";
@@ -8,11 +8,16 @@
   import { savedNetwork } from "$lib/network/stores";
   import { goto } from "$app/navigation";
   import { setContext } from "svelte";
+
+  let PUBLIC_ANALYTICS_ID: string | null = null;
+  let PUBLIC_ANALYTICS_URL: string | null = null;
   if (!dev) {
-    import {
-      PUBLIC_ANALYTICS_ID,
-      PUBLIC_ANALYTICS_URL,
-    } from "$env/static/public";
+    import("$env/static/public").then((env: any) => {
+      if (env["PUBLIC_ANALYTICS_ID"] && env["PUBLIC_ANALYTICS_URL"]) {
+        PUBLIC_ANALYTICS_ID = env.PUBLIC_ANALYTICS_ID;
+        PUBLIC_ANALYTICS_URL = env.PUBLIC_ANALYTICS_URL;
+      }
+    });
   }
 
   setupEventListeners();
