@@ -25,6 +25,9 @@ export const ICONS: Record<string, ComponentType> = {
     "factory/kujira1eqqr3ad0lh84ua4m5qu2n4jjz6h73d64jfwvng0w2k0lnhltt4jqdex4z9/urcpt":
         IconqcKuji,
 
+    "factory/kujira1rw2w22jt3r6fl6zdl5gpv7d92vxrmx4tuvr4kgxfmfggklud3cxsxc73rx/urcpt":
+        IconqcKuji,
+
     "factory/kujira1m96ucsfpt2yy72w09z2rxjdj38y5qd8lqx5jtggnejmdua2ynpnsxyvjex/urcpt":
         IconqcKuji,
 
@@ -80,8 +83,21 @@ const mainnetControllers: Record<string, ControllerConfig> = {
     },
 };
 
+const testnetControllers: Record<string, ControllerConfig> = {
+    "kujira1zp30sm7z078pyprelwq4at0za4tz7xrrwdrv0xnmxl0s4sl9dwnserwaem": {
+        address: "kujira1zp30sm7z078pyprelwq4at0za4tz7xrrwdrv0xnmxl0s4sl9dwnserwaem",
+        askDenom: "factory/kujira1hf3898lecj8lawxq8nwqczegrla9denzfkx4asjg0q27cyes44sq68gvc9/ampKUJI",
+        offerDenom: "ukuji",
+    },
+    "kujira1uat2f4mpyygv26gexhan6vuv5k00j9vjgdmg6047zg3z554se90quuhqsy": {
+        address: "kujira1uat2f4mpyygv26gexhan6vuv5k00j9vjgdmg6047zg3z554se90quuhqsy",
+        askDenom: "factory/kujira1rw2w22jt3r6fl6zdl5gpv7d92vxrmx4tuvr4kgxfmfggklud3cxsxc73rx/urcpt",
+        offerDenom: "ukuji",
+    },
+}
+
 export const CONTROLLERS: Record<NETWORK, typeof mainnetControllers> = {
     [MAINNET]: mainnetControllers,
-    [TESTNET]: {},
+    [TESTNET]: testnetControllers,
     [POND]: {},
 }

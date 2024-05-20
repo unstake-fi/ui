@@ -135,6 +135,7 @@
     async () => {
       let $signer = await get(signer);
       let $balances = await get(balances);
+      console.log($balances);
       let $offer = await get(offer);
       if (!$signer || !$selectedConfig || !$offer) return null;
       const controllerAddr = $selectedConfig.address;

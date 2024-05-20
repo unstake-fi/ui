@@ -16,7 +16,7 @@
   setupEventListeners();
 
   const controllers = Object.keys(CONTROLLERS[$savedNetwork.chainId]);
-  const defaultController = controllers.length >= 3 ? controllers[2] : null;
+  const defaultController = controllers.length > 0 ? controllers[0] : null;
 
   const controller = writable(
     browser
