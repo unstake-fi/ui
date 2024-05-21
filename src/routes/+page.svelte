@@ -292,54 +292,21 @@
           class="bg-neutral-800 text-left text-stone-200"
         />
       </div>
-      <div class="flex justify-between">
-        <div
-          class="flex flex-col gap-0.5 text-xs text-stone-300"
+      <div class="flex justify-between items-end">
+        <button
+          class="flex items-center percentage-button text-xs"
+          on:click={(_) => ($amount = $maxSelectedDenom?.toFixed() ?? "0")}
           use:autoAnimate
         >
-          <div class="flex items-center">
-            <p class="text-stone-500">Available:</p>
-            {#if $maxSelectedDenom !== undefined}
-              <button
-                class="ml-1 hover:text-amber-300"
-                on:click={(_) => ($amount = $maxSelectedDenom.toFixed())}
-                use:autoAnimate
-              >
-                {formatBigNumber($maxSelectedDenom, 2)}
-              </button>
-            {:else}
-              <p class="ml-1 text-red-500">0.00</p>
-            {/if}
-          </div>
+          <p class="text-stone-500 mr-1">Available:</p>
           {#if $maxSelectedDenom !== undefined}
-            <div class="flex items-center gap-1">
-              <button
-                class="-ml-0.5 percentage-button"
-                on:click={(_) => ($amount = $maxSelectedDenom.toFixed())}
-              >
-                100%
-              </button>
-              <button
-                class="percentage-button"
-                on:click={(_) => ($amount = $maxSelectedDenom.div(2).toFixed())}
-              >
-                50%
-              </button>
-              <button
-                class="percentage-button hidden xs:block"
-                on:click={(_) => ($amount = $maxSelectedDenom.div(4).toFixed())}
-              >
-                25%
-              </button>
-              <button
-                class="percentage-button hidden xs:block"
-                on:click={(_) => ($amount = "0")}
-              >
-                0%
-              </button>
-            </div>
+            <p class="text-inherit">
+              {formatBigNumber($maxSelectedDenom, 2)}
+            </p>
+          {:else}
+            <p class="text-red-500">0.00</p>
           {/if}
-        </div>
+        </button>
         <div class="flex flex-col items-end mr-1">
           <p class="text-xs text-stone-500 -mb-1 mt-1">Protocol Rate</p>
           {#await $controllerInfo}
@@ -550,7 +517,7 @@
 
 <style>
   .percentage-button {
-    @apply border border-amber-600 bg-red-800/50 px-1 rounded-md hover:text-amber-300 hover:bg-red-700/50;
+    @apply px-1.5 py-1 rounded-md border border-stone-700 hover:border-stone-600 hover:bg-stone-700/50 hover:text-amber-300;
   }
   #submit:disabled {
     @apply text-stone-400 opacity-50;
