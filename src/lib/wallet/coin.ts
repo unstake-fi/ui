@@ -1,4 +1,4 @@
-import { DENOMS } from "$lib/resources/denoms";
+import { DENOMS, denom as _denom } from "$lib/resources/denoms";
 import type { Coin } from "@cosmjs/amino";
 import BigNumber from "bignumber.js";
 import { formatBigNumber } from "./utils";
@@ -9,7 +9,7 @@ export class Balance {
   readonly name: string;
   readonly dec: number;
   constructor(coin: Coin) {
-    const meta = DENOMS[coin.denom] ?? { name: coin.denom, dec: 0 };
+    const meta = _denom(coin.denom) ?? { name: coin.denom, dec: 0 };
     this.name = meta.name;
     this.dec = meta.dec;
     this.denom = coin.denom;
@@ -18,7 +18,7 @@ export class Balance {
   static from = (coin: Coin) => new Balance(coin);
   static fromAmountDenom = (amount: string, denom: string) => new Balance({ amount: amount.toString(), denom });
   static fromHuman = (amount: string, denom: string) => {
-    const meta = DENOMS[denom] ?? { name: denom, dec: 0 };
+    const meta = _denom(denom) ?? { name: denom, dec: 0 };
     return new Balance({ amount: new BigNumber(amount).times(new BigNumber(10).pow(meta.dec)).toString(), denom });
   }
 

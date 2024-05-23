@@ -16,7 +16,7 @@
   } from "$lib/onchain/queryTypes";
   import { TxStep, broadcastTx, simulate } from "$lib/onchain/transaction";
   import { refreshing, statusOf } from "$lib/refreshing";
-  import { DENOMS } from "$lib/resources/denoms";
+  import { denom } from "$lib/resources/denoms";
   import { msg } from "$lib/resources/msg";
   import {
     CONTROLLERS,
@@ -59,11 +59,9 @@
 
   const denomMeta = {
     icon: (option: ControllerConfig) => icon(option.askDenom),
-    label: (option: ControllerConfig) => DENOMS[option.askDenom]?.name,
+    label: (option: ControllerConfig) => denom(option.askDenom)?.name,
     filter: (option: ControllerConfig, search: string) =>
-      DENOMS[option.askDenom]?.name
-        .toLowerCase()
-        .includes(search.toLowerCase()),
+      denom(option.askDenom)?.name.toLowerCase().includes(search.toLowerCase()),
   };
 
   $: allControllers = CONTROLLERS[$savedNetwork.chainId];
@@ -388,7 +386,7 @@
               this={icon($selectedConfig.offerDenom)}
               class="w-6 h-6"
             />
-            <p>{DENOMS[$selectedConfig.offerDenom].name}</p>
+            <p>{denom($selectedConfig.offerDenom)?.name}</p>
           {/if}
         </div>
 

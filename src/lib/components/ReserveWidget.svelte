@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { DENOMS } from "$lib/resources/denoms";
+  import { denom } from "$lib/resources/denoms";
   import {
     MEMO,
     icon,
@@ -39,7 +39,7 @@
       if (!$balances || !$signer) return undefined;
       const denom =
         $selected === "provide" ? reserve.baseDenom : reserve.rsvDenom;
-      return $balances.get(denom)?.normalized();
+      return $balances.get(denom)?.normalized() ?? BigNumber(0);
     }
   );
 
@@ -138,7 +138,7 @@
     <div class="flex flex-col items-center gap-0.5">
       <svelte:component this={icon(reserve.baseDenom)} class="h-16 w-16 mt-2" />
       <p class="text-sm text-center">
-        {DENOMS[reserve.baseDenom]?.name}
+        {denom(reserve.baseDenom)?.name}
       </p>
     </div>
   </CircularProgress>
@@ -164,12 +164,31 @@
           <p class="text-stone-500 mr-1">Available:</p>
           {#if $maxSelectedDenom !== undefined}
             <p class="text-inherit">
-              {formatBigNumber($maxSelectedDenom, 2)}
+              {Balance.fromHuman(
+                $maxSelectedDenom.toFixed(),
+                reserve.baseDenom
+              ).display(2)}
             </p>
           {:else}
             <p class="text-red-500">0.00</p>
           {/if}
         </button>
+        {#await status then stats}
+          <div
+            class="flex flex-col ml-0.5 px-2 text-xs w-full items-start mb-1"
+          >
+            <hr class="w-full border-stone-600 mb-1" />
+            <p class="text-stone-500 mr-1">Receive:</p>
+            <p class="text-inherit text-base">
+              {Balance.fromAmountDenom(
+                $amountRaw.amount
+                  .dividedBy(stats.reserve_redemption_rate)
+                  .toString(),
+                reserve.rsvDenom
+              ).display(6)}
+            </p>
+          </div>
+        {/await}
       {:else}
         <p class="text-center w-full">Provide</p>
       {/if}
@@ -184,22 +203,42 @@
     >
       {#if $selected === "withdraw"}
         <NumberInput
-          class="bg-inherit focus:outline-none w-full pl-2 pr-4 pt-2 rounded-md"
+          class="bg-inherit focus:outline-none w-full pl-2.5 pr-4 pt-1 rounded-md"
           autofocus={true}
           bind:value={$amount}
         />
-        <div
-          class="flex text-xs px-1 ml-1 py-1 rounded-md border border-transparent hover:border-stone-600 z-10"
+        <button
+          class="flex text-xs px-1.5 ml-1 py-0.5 -mt-0.5 mb-0.5 rounded-md border border-transparent hover:border-stone-600 hover:bg-stone-700/50 hover:text-amber-300 z-10 text-stone-300"
+          on:click={(_) => ($amount = $maxSelectedDenom?.toFixed() ?? "0")}
         >
           <p class="text-stone-500 mr-1">Available:</p>
           {#if $maxSelectedDenom !== undefined}
-            <p class="text-stone-300">
-              {formatBigNumber($maxSelectedDenom, 2)}
+            <p class="text-inherit">
+              {Balance.fromHuman(
+                $maxSelectedDenom.toFixed(),
+                reserve.rsvDenom
+              ).display(2)}
             </p>
           {:else}
             <p class="text-red-500">0.00</p>
           {/if}
-        </div>
+        </button>
+        {#await status then stats}
+          <div
+            class="flex flex-col ml-0.5 px-2 text-xs w-full items-start mb-1"
+          >
+            <hr class="w-full border-stone-600 mb-1" />
+            <p class="text-stone-500 mr-1">Receive:</p>
+            <p class="text-inherit text-base">
+              {Balance.fromAmountDenom(
+                $amountRaw.amount
+                  .times(stats.reserve_redemption_rate)
+                  .toString(),
+                reserve.baseDenom
+              ).display(6)}
+            </p>
+          </div>
+        {/await}
       {:else}
         <p class="text-center w-full">Withdraw</p>
       {/if}
@@ -212,7 +251,7 @@
         <p class="text-xs">
           Amount exceeds balance
           <span class="text-stone-500">
-            ({formatBigNumber($maxSelectedDenom, 2)})
+            ({formatBigNumber($maxSelectedDenom ?? BigNumber(0), 2)})
           </span>
         </p>
       </div>
@@ -245,6 +284,7 @@
         class="button flex-1 px-4 py-2"
         on:click={() => {
           $selected = null;
+          $amount = "";
         }}
       >
         Cancel

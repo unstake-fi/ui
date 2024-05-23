@@ -1,3 +1,7 @@
+import { RESERVES } from "./registry";
+import { savedNetwork } from "$lib/network/stores";
+import { get } from "svelte/store";
+
 export const DENOMS: { [denom: string]: { name: string, dec: number } } = {
     "factory/kujira1hf3898lecj8lawxq8nwqczegrla9denzfkx4asjg0q27cyes44sq68gvc9/ampKUJI": { name: "ampKUJI", dec: 6 },
     "factory/kujira1n3fr5f56r2ce0s37wdvwrk98yhhq3unnxgcqus8nzsfxvllk0yxquurqty/ampKUJI": { name: "ampKUJI", dec: 6 },
@@ -14,3 +18,18 @@ export const DENOMS: { [denom: string]: { name: string, dec: number } } = {
     "factory/kujira14qqwk3655csqvcg5ft37z25aped46s86vplma4mstp73r0nuy8dqy2xh84/unut": { name: "NUT", dec: 6 },
     "factory/kujira14qqwk3655csqvcg5ft37z25aped46s86vplma4mstp73r0nuy8dqy2xh84/usnut": { name: "sNUT", dec: 6 },
 };
+
+export function denom(denom: string): { name: string, dec: number } | undefined {
+    if (denom.startsWith("factory/")) {
+        const [_, contract, subdenom] = denom.split("/");
+        let chainId = get(savedNetwork).chainId;
+        const reserve = RESERVES[chainId]?.[contract];
+        if (reserve && subdenom === "ursv") {
+            return {
+                name: `ux${DENOMS[reserve.baseDenom].name}`,
+                dec: DENOMS[reserve.baseDenom].dec,
+            }
+        }
+    }
+    return DENOMS[denom];
+}

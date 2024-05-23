@@ -189,6 +189,20 @@
   {/if}
 {/await}
 
+<div>
+  {$txSimStatus}
+  {#if $txSimStatus === "error"}
+    <p>Failed to simulate transaction:</p>
+    {#await $txSim then sim}
+      <p>{sim}</p>
+    {:catch e}
+      <p>{e}</p>
+    {/await}
+  {/if}
+
+</div>
+
+
 <style lang="postcss">
   .button {
     @apply bg-stone-700/50 text-stone-200 py-2 px-4 text-lg rounded-md border hover:bg-stone-600/50 border-stone-600 hover:border-stone-500;

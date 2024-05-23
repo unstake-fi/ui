@@ -3,7 +3,6 @@
   import { goto } from "$app/navigation";
   import { client, savedNetwork } from "$lib/network/stores";
   import { refreshing } from "$lib/refreshing";
-  import { DENOMS } from "$lib/resources/denoms";
   import { MAINNET, TESTNET } from "$lib/resources/networks";
   import {
     RESERVES,
@@ -13,7 +12,6 @@
   import { Balance } from "$lib/wallet/coin";
   import { get } from "svelte/store";
   import { BigNumber } from "bignumber.js";
-  import CircularProgress from "$lib/components/CircularProgress.svelte";
   import ReserveWidget from "$lib/components/ReserveWidget.svelte";
 
   $: testnet = $savedNetwork.chainId === TESTNET;
