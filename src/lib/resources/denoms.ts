@@ -11,4 +11,6 @@ export const DENOMS: { [denom: string]: { name: string, dec: number } } = {
     "ukuji": { name: "KUJI", dec: 6 },
     "factory/kujira1643jxg8wasy5cfcn7xm8rd742yeazcksqlg4d7/umnta": { name: "MNTA", dec: 6 },
     "factory/kujira1sc6a0347cc5q3k890jj0pf3ylx2s38rh4sza4t/ufuzn": { name: "FUZN", dec: 6 },
+    "factory/kujira14qqwk3655csqvcg5ft37z25aped46s86vplma4mstp73r0nuy8dqy2xh84/unut": { name: "NUT", dec: 6 },
+    "factory/kujira14qqwk3655csqvcg5ft37z25aped46s86vplma4mstp73r0nuy8dqy2xh84/usnut": { name: "sNUT", dec: 6 },
 };

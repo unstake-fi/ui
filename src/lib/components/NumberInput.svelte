@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
   let clazz: string = "";
   export { clazz as class };
   export let id: string = "";
   export let value: string = "";
   export let placeholder: string = "0";
+  export let autofocus: boolean = false;
 
   let node: HTMLInputElement;
 
@@ -38,6 +41,12 @@
       node.selectionStart = node.selectionEnd = ss;
     }
   }
+
+  onMount(() => {
+    if (autofocus) {
+      node.focus();
+    }
+  });
 </script>
 
 <input

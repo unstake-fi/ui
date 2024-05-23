@@ -3,7 +3,7 @@ import type { ChainInfo, FeeCurrency } from "@keplr-wallet/types";
 
 export const MAINNET = "kaiyo-1";
 export const TESTNET = "harpoon-4";
-export const POND = "pond-1";
+export const POND = "kujira-1";
 
 export type NETWORK = typeof MAINNET | typeof TESTNET | typeof POND;
 
@@ -62,7 +62,7 @@ export const NETWORKS: Record<string, NetworkMetadata> = {
         prod: false,
         icon: IconKujira,
         explorer: `https://finder.kujira.network/${POND}`,
-        rpcs: ["http://127.0.0.1:10157"],
+        rpcs: ["http://127.0.0.1:11157"],
     },
 };
 

@@ -20,7 +20,7 @@
   import { msg } from "$lib/resources/msg";
   import {
     CONTROLLERS,
-    ICONS,
+    icon,
     MEMO,
     type ControllerConfig,
   } from "$lib/resources/registry";
@@ -58,7 +58,7 @@
   setContext("controller", controller);
 
   const denomMeta = {
-    icon: (option: ControllerConfig) => ICONS[option.askDenom],
+    icon: (option: ControllerConfig) => icon(option.askDenom),
     label: (option: ControllerConfig) => DENOMS[option.askDenom]?.name,
     filter: (option: ControllerConfig, search: string) =>
       DENOMS[option.askDenom]?.name
@@ -385,7 +385,7 @@
         >
           {#if $selectedConfig !== null}
             <svelte:component
-              this={ICONS[$selectedConfig.offerDenom]}
+              this={icon($selectedConfig.offerDenom)}
               class="w-6 h-6"
             />
             <p>{DENOMS[$selectedConfig.offerDenom].name}</p>

@@ -9,10 +9,13 @@ import IconqcKuji from "$lib/components/icons/IconqcKUJI.svelte";
 import IconqcMnta from "$lib/components/icons/IconqcMNTA.svelte";
 import type { ComponentType } from "svelte";
 import { MAINNET, POND, TESTNET, type NETWORK } from "./networks";
+import { CircleHelp } from "lucide-svelte";
+import type { Balance } from "$lib/wallet/coin";
+import BigNumber from "bignumber.js";
 
 export const MEMO = "Powered by https://unstake.fi";
 
-export const ICONS: Record<string, ComponentType> = {
+const ICONS: Record<string, ComponentType> = {
     "factory/kujira1hf3898lecj8lawxq8nwqczegrla9denzfkx4asjg0q27cyes44sq68gvc9/ampKUJI":
         IconampKuji,
 
@@ -43,6 +46,10 @@ export const ICONS: Record<string, ComponentType> = {
     "factory/kujira1643jxg8wasy5cfcn7xm8rd742yeazcksqlg4d7/umnta": IconMnta,
     "factory/kujira1sc6a0347cc5q3k890jj0pf3ylx2s38rh4sza4t/ufuzn": IconFuzn,
 };
+
+export function icon(denom: string) {
+    return ICONS[denom] ?? CircleHelp;
+}
 
 export type ControllerConfig = {
     address: string;
@@ -94,6 +101,11 @@ const testnetControllers: Record<string, ControllerConfig> = {
         askDenom: "factory/kujira1rw2w22jt3r6fl6zdl5gpv7d92vxrmx4tuvr4kgxfmfggklud3cxsxc73rx/urcpt",
         offerDenom: "ukuji",
     },
+    "kujira12nvlxl0zuj30errrd4kpp8tneghe0wcmnwnepamlk0dlduyey7yqehvwwa": {
+        address: "kujira12nvlxl0zuj30errrd4kpp8tneghe0wcmnwnepamlk0dlduyey7yqehvwwa",
+        askDenom: "factory/kujira14qqwk3655csqvcg5ft37z25aped46s86vplma4mstp73r0nuy8dqy2xh84/usnut",
+        offerDenom: "factory/kujira14qqwk3655csqvcg5ft37z25aped46s86vplma4mstp73r0nuy8dqy2xh84/unut",
+    },
 }
 
 export const CONTROLLERS: Record<NETWORK, typeof mainnetControllers> = {
@@ -101,3 +113,40 @@ export const CONTROLLERS: Record<NETWORK, typeof mainnetControllers> = {
     [TESTNET]: testnetControllers,
     [POND]: {},
 }
+
+export type ReserveConfig = {
+    address: string;
+    baseDenom: string;
+    rsvDenom: string;
+};
+
+export const RESERVES: Record<NETWORK, Record<string, ReserveConfig>> = {
+    [MAINNET]: {
+    },
+    [TESTNET]: {
+        "kujira148xgyh79u0wnppc94hdgs0npdtyd8uexm9lvg4njvy4rekhftm4qukhm40": {
+            address: "kujira148xgyh79u0wnppc94hdgs0npdtyd8uexm9lvg4njvy4rekhftm4qukhm40",
+            baseDenom: "ukuji",
+            rsvDenom: "factory/kujira148xgyh79u0wnppc94hdgs0npdtyd8uexm9lvg4njvy4rekhftm4qukhm40/ursv",
+        },
+        "kujira1h4safa0mtt6aj9f022t3w2tsewresraz5hsycj8xjyged8su8yrqtazspd": {
+            address: "kujira1h4safa0mtt6aj9f022t3w2tsewresraz5hsycj8xjyged8su8yrqtazspd",
+            baseDenom: "factory/kujira1643jxg8wasy5cfcn7xm8rd742yeazcksqlg4d7/umnta",
+            rsvDenom: "factory/kujira1h4safa0mtt6aj9f022t3w2tsewresraz5hsycj8xjyged8su8yrqtazspd/ursv",
+        },
+        "kujira1yphr700vldghkkzlu40sek4kuwu8nxaglvg88e3vf9hnf6cdc2ssqgcjpx": {
+            address: "kujira1yphr700vldghkkzlu40sek4kuwu8nxaglvg88e3vf9hnf6cdc2ssqgcjpx",
+            baseDenom: "factory/kujira14qqwk3655csqvcg5ft37z25aped46s86vplma4mstp73r0nuy8dqy2xh84/unut",
+            rsvDenom: "factory/kujira1yphr700vldghkkzlu40sek4kuwu8nxaglvg88e3vf9hnf6cdc2ssqgcjpx/ursv",
+        },
+    },
+    [POND]: {
+    },
+}
+
+export interface ReserveStatusResponse {
+    total: Balance;
+    deployed: Balance;
+    available: Balance;
+    reserve_redemption_rate: BigNumber;
+};
