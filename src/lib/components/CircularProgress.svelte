@@ -23,13 +23,13 @@
   }
 </script>
 
-<div class="relative aspect-square">
+<div class="relative aspect-square max-w-full max-h-full">
   <svg
     viewBox="-10 -10 200 200"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
     transform="rotate(-90)"
-    class="absolute inset-0 w-full h-full"
+    class="absolute max-w-full max-h-full"
   >
     <defs>
       <clipPath id="cut-off">

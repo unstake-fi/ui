@@ -57,5 +57,6 @@
   on:keydown={onKeydown}
   on:click={(e) => e.stopPropagation()}
   class={clazz}
+  size={value.length + 1}
   {id}
 />

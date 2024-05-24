@@ -57,7 +57,9 @@
       for="connect"
       class="flex items-center justify-center text-amber-300/80 cursor-pointer"
     >
-      <p class="text-sm xs:text-base">Connect Wallet</p>
+      <p class="text-sm xs:text-base">
+        Connect <span class="hidden xs:inline">Wallet</span>
+      </p>
     </label>
   </button>
 {/if}
