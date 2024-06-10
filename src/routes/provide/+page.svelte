@@ -1,12 +1,8 @@
 <script lang="ts">
-  import { browser } from "$app/environment";
-  import { goto } from "$app/navigation";
   import { client, savedNetwork } from "$lib/network/stores";
   import { refreshing } from "$lib/refreshing";
-  import { MAINNET, TESTNET } from "$lib/resources/networks";
   import {
     RESERVES,
-    icon,
     type ReserveStatusResponse,
   } from "$lib/resources/registry";
   import { Balance } from "$lib/wallet/coin";
@@ -14,13 +10,7 @@
   import { BigNumber } from "bignumber.js";
   import ReserveWidget from "$lib/components/reserve/ReserveWidget.svelte";
   import WalletInfo from "$lib/components/WalletInfo.svelte";
-
-  $: testnet = $savedNetwork.chainId === TESTNET;
-
-  if ($savedNetwork.chainId === MAINNET) {
-    $savedNetwork.chainId = TESTNET;
-    // if (browser) goto("/");
-  }
+  import ReserveMigration from "$lib/components/ReserveMigration.svelte";
 
   $: allReserves = Object.values(RESERVES[$savedNetwork.chainId]);
 
@@ -60,38 +50,31 @@
   );
 </script>
 
-{#if !testnet}
-  <div class="flex max-w-prose items-center justify-center mx-auto">
-    <div class="text-center">
-      <h1 class="text-4xl text-red-500">Only available on Testnet</h1>
-    </div>
+<div class="max-w-prose mx-auto">
+  <div class="mb-4">
+    <ReserveMigration />
   </div>
-{:else}
-  <div class="max-w-prose mx-auto px-4">
-    <div class="flex items-center justify-between w-full mb-4 gap-4">
-      <h1 class="text-2xl xs:text-3xl md:text-4xl text-center">
-        Protocol Reserves
-      </h1>
-      <WalletInfo />
-    </div>
+  <div class="flex items-center justify-between w-full mb-4 gap-4">
+    <h1 class="text-2xl xs:text-3xl md:text-4xl text-center">
+      Protocol Reserves
+    </h1>
+    <WalletInfo />
   </div>
+</div>
+<div
+  class="flex flex-col max-w-screen-md mx-auto items-stretch xs:items-start w-full xs:w-fit"
+>
   <div
-    class="flex flex-col max-w-screen-md mx-auto items-stretch xs:items-start w-full xs:w-fit"
+    class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 text-stone-200 w-full xs:w-fit"
   >
-    <div
-      class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 text-stone-200 w-full xs:w-fit"
-    >
-      {#each allReserves as reserve}
-        {@const status = $reserveStatuses.then(
-          (stats) => stats[reserve.address]
-        )}
-        <ReserveWidget
-          {status}
-          {reserve}
-          query={reserveStatuses}
-          class="basis-1/3 mx-4 xs:mx-0"
-        />
-      {/each}
-    </div>
+    {#each allReserves as reserve}
+      {@const status = $reserveStatuses.then((stats) => stats[reserve.address])}
+      <ReserveWidget
+        {status}
+        {reserve}
+        query={reserveStatuses}
+        class="basis-1/3 mx-4 xs:mx-0"
+      />
+    {/each}
   </div>
-{/if}
+</div>

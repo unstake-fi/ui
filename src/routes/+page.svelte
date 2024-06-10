@@ -4,6 +4,7 @@
   import { page } from "$app/stores";
   import DenomSelect from "$lib/components/DenomSelect.svelte";
   import NumberInput from "$lib/components/NumberInput.svelte";
+  import ReserveMigration from "$lib/components/ReserveMigration.svelte";
   import TxProgress from "$lib/components/TxProgress.svelte";
   import WalletInfo from "$lib/components/WalletInfo.svelte";
   import Loading from "$lib/components/icons/Loading.svelte";
@@ -273,6 +274,7 @@
 <TxProgress {status} {txPromise} />
 
 <div class="mx-auto max-w-prose">
+  <ReserveMigration />
   <h1
     class="text-slate-100 mt-4 xs:mt-8 mb-6 xs:mb-8 text-center text-4xl font-light"
   >
