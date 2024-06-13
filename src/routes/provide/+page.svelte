@@ -1,4 +1,7 @@
 <script lang="ts">
+  import data from "./data.json";
+  import LineChart from "$lib/components/LineChart.svelte";
+
   import { client, savedNetwork } from "$lib/network/stores";
   import { refreshing } from "$lib/refreshing";
   import {
@@ -76,5 +79,17 @@
         class="basis-1/3 mx-4 xs:mx-0"
       />
     {/each}
+  </div>
+</div>
+
+<div class="max-w-prose mx-auto">
+  <div class="flex flex-col items-center w-full mt-4 gap-4">
+    <h1 class="text-2xl xs:text-3xl md:text-4xl">
+      Analytics
+    </h1>
+    <h2>998.50 USD</h2>
+    <h2>+284.78 (39.85%)</h2>
+    
+    <!-- <LineChart {data} /> -->
   </div>
 </div>
