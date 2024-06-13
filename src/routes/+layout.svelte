@@ -3,8 +3,6 @@
   import "../app.css";
   import { dev } from "$app/environment";
   import { page } from "$app/stores";
-  import { savedNetwork } from "$lib/network/stores";
-  import { TESTNET } from "$lib/resources/networks";
 
   let PUBLIC_ANALYTICS_ID: string | null = null;
   let PUBLIC_ANALYTICS_URL: string | null = null;
@@ -20,7 +18,6 @@
   setupEventListeners();
 
   $: path = $page.url.pathname;
-  $: testnet = $savedNetwork.chainId === TESTNET;
 </script>
 
 <svelte:head>
@@ -38,9 +35,7 @@
   <div class="flex max-w-prose justify-between mx-auto p-4">
     <img src="/unstake-name.svg" class="h-12 xs:h-14" alt="Unstake.fi Logo" />
     <nav class="flex gap-1 xs:gap-3 items-center text-sm xs:text-base">
-      <div class="coming-soon" class:accessible={testnet}>
-        <a href="/provide" class:active={path === "/provide"}>Provide</a>
-      </div>
+      <a href="/provide" class:active={path === "/provide"}>Provide</a>
       <a href="/" class:active={path === "/"}>Unstake</a>
     </nav>
   </div>
@@ -67,7 +62,7 @@
     @apply text-amber-500;
   }
 
-  .coming-soon {
+  /*.coming-soon {
     @apply relative;
   }
 
@@ -87,5 +82,5 @@
     @apply bg-red-600 px-1 py-0.5 rounded-md text-stone-300 opacity-70;
     @apply text-xs absolute -left-4 -top-2.5 text-nowrap -rotate-12;
     content: "Soon";
-  }
+  }*/
 </style>

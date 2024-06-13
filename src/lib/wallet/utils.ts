@@ -27,20 +27,20 @@ export const aminoTypes = (prefix: string): s.AminoTypes =>
     });
 
 
-
 export function localeDecimalSep() {
     return Intl.NumberFormat()
         .formatToParts(1.1)
-        .find(part => part.type === 'decimal')!
-        .value;
+        .find(part => part.type === 'decimal')
+        ?.value ?? '.';
 }
 
 export function localeThousandsSep() {
     return Intl.NumberFormat()
         .formatToParts(1000)
-        .find(part => part.type === 'group')!
-        .value;
+        .find(part => part.type === 'group')
+        ?.value ?? ',';
 }
+
 
 export function formatBigNumber(value: BigNumber, decimals: number = 2): string {
     const parts = value.toFixed(decimals, 1).split(".");

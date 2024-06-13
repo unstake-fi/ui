@@ -122,6 +122,21 @@ export type ReserveConfig = {
 
 export const RESERVES: Record<NETWORK, Record<string, ReserveConfig>> = {
     [MAINNET]: {
+        "kujira1644hwd9mjasvnjf2qcadlzxs6egs6d2km2k6lety9u5fdmhzfg0svr54zh": {
+            address: "kujira1644hwd9mjasvnjf2qcadlzxs6egs6d2km2k6lety9u5fdmhzfg0svr54zh",
+            baseDenom: "ukuji",
+            rsvDenom: "factory/kujira1644hwd9mjasvnjf2qcadlzxs6egs6d2km2k6lety9u5fdmhzfg0svr54zh/ursv",
+        },
+        "kujira1vvquglh6dn35gz22t7dd05y5kpckjleudyw9x3n6hgd324vq0hyq66zca0": {
+            address: "kujira1vvquglh6dn35gz22t7dd05y5kpckjleudyw9x3n6hgd324vq0hyq66zca0",
+            baseDenom: "factory/kujira1643jxg8wasy5cfcn7xm8rd742yeazcksqlg4d7/umnta",
+            rsvDenom: "factory/kujira1vvquglh6dn35gz22t7dd05y5kpckjleudyw9x3n6hgd324vq0hyq66zca0/ursv",
+        },
+        "kujira168vaplwpxmfl9r95grtclh74fprle8f4g7rs4sn8ardf32pzaprq6r7ydk": {
+            address: "kujira168vaplwpxmfl9r95grtclh74fprle8f4g7rs4sn8ardf32pzaprq6r7ydk",
+            baseDenom: "factory/kujira1sc6a0347cc5q3k890jj0pf3ylx2s38rh4sza4t/ufuzn",
+            rsvDenom: "factory/kujira168vaplwpxmfl9r95grtclh74fprle8f4g7rs4sn8ardf32pzaprq6r7ydk/ursv",
+        }
     },
     [TESTNET]: {
         "kujira148xgyh79u0wnppc94hdgs0npdtyd8uexm9lvg4njvy4rekhftm4qukhm40": {
