@@ -1,7 +1,4 @@
 <script lang="ts">
-  import data from "./data.json";
-  import LineChart from "$lib/components/LineChart.svelte";
-
   import { client, savedNetwork } from "$lib/network/stores";
   import { refreshing } from "$lib/refreshing";
   import {
@@ -14,6 +11,27 @@
   import ReserveWidget from "$lib/components/reserve/ReserveWidget.svelte";
   import WalletInfo from "$lib/components/WalletInfo.svelte";
   import ReserveMigration from "$lib/components/ReserveMigration.svelte";
+  import type { PageData } from "./$types";
+  import DateLineChart from "$lib/components/graph/DateLineChart.svelte";
+  import { ArrowUp } from "lucide-svelte";
+  import sampleData from "./data.json";
+  import { Range } from "$lib/components/graph/types";
+
+  let graphRange = Range.MAX;
+
+  const formattedSampleData = sampleData.map((d) => ({
+    ...d,
+    time: new Date(d.time),
+  }));
+
+  let data: PageData = {
+    unstakeAnalyticsData: formattedSampleData,
+  };
+
+  const pnlData = data.unstakeAnalyticsData.map((analytics) => ({
+    time: analytics.time,
+    y: analytics["Profit & Loss"]
+  }));
 
   $: allReserves = Object.values(RESERVES[$savedNetwork.chainId]);
 
@@ -83,13 +101,28 @@
 </div>
 
 <div class="max-w-prose mx-auto">
-  <div class="flex flex-col items-center w-full mt-4 gap-4">
-    <h1 class="text-2xl xs:text-3xl md:text-4xl">
-      Analytics
-    </h1>
-    <h2>998.50 USD</h2>
-    <h2>+284.78 (39.85%)</h2>
-    
-    <!-- <LineChart {data} /> -->
+  <div class="flex flex-col justify-center w-full my-4 gap-4">
+    <h1 class="text-2xl xs:text-3xl md:text-4xl">Analytics</h1>
+  </div>
+</div>
+
+<div class="flex w-full gap-2 items-center max justify-center flex-col">
+  <div
+    class="flex flex-1 max-w-xl bg-stone-800 rounded-lg py-2 px-2.5 flex-col justify-start"
+  >
+    <p class="text-md text-stone-400">Profit & Loss</p>
+    <p class="text-lg bold font-semibold">
+      998.50 <span class="font-normal">KUJI</span>
+    </p>
+    <p class="text-sm text-green-600">
+      +26.45 (14.25%) <ArrowUp class="inline" /> year to date
+    </p>
+    <DateLineChart
+      data={pnlData}
+      yVarTitle={"Profit & Loss"}
+      chartWidth={500}
+      chartHeight={400}
+      {graphRange}
+    />
   </div>
 </div>
