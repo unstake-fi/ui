@@ -12,14 +12,8 @@
   import WalletInfo from "$lib/components/WalletInfo.svelte";
   import ReserveMigration from "$lib/components/ReserveMigration.svelte";
   import type { PageData } from "./$types";
-  import DateLineChart from "$lib/components/graph/DateLineChart.svelte";
-  import { ArrowUp } from "lucide-svelte";
   import sampleData from "./data.json";
-  import { TimeRange } from "$lib/components/graph/types";
-  import LineChart from "$lib/components/graph/LineChart.svelte";
-
-  // TODO: Make graph range toggable
-  let graphTimeRange = TimeRange.MAX;
+  import DateLineChartWrapper from "$lib/graph/DateLineChartWrapper.svelte";
 
   const formattedSampleData = sampleData.map((d) => ({
     ...d,
@@ -32,7 +26,7 @@
 
   const pnlData = data.unstakeAnalyticsData.map((analytics) => ({
     x: analytics.time,
-    y: analytics["Profit & Loss"]
+    y: analytics["Profit & Loss"],
   }));
 
   $: allReserves = Object.values(RESERVES[$savedNetwork.chainId]);
@@ -109,23 +103,10 @@
 </div>
 
 <div class="flex w-full gap-2 items-center max justify-center flex-col">
-  <div
-    class="flex flex-1 max-w-xl bg-stone-800 rounded-lg py-2 px-2.5 flex-col justify-start"
-  >
-    <p class="text-md text-stone-400">Profit & Loss</p>
-    <p class="text-lg bold font-semibold">
-      998.50 <span class="font-normal">KUJI</span>
-    </p>
-    <p class="text-sm text-green-600">
-      +26.45 (14.25%) <ArrowUp class="inline" /> year to date
-    </p>
-    <!-- <DateLineChart
-      data={pnlData}
-      yVarTitle={"Profit & Loss"}
-      chartWidth={500}
-      chartHeight={400}
-      {graphRange}
-    /> -->
-    <LineChart chartData={pnlData} timeRange={graphTimeRange}/>
-  </div>
+  <DateLineChartWrapper
+    chartData={pnlData}
+    datasetLabel={"Profit & Loss"}
+    yLabel="Value (KUJI)"
+    unit="KUJI"
+  />
 </div>
