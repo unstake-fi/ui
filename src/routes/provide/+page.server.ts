@@ -9,11 +9,13 @@ type UnstakeAnalytics = {
 
 export const load: PageServerLoad = async () => {
   try {
-    // TODO: use interest rates
+    // TODO: use interest rates to calculate PNL for uncompleted unstake events
+    // for now, only completed unstake events are used to calculate PnL.
     const protocolHealthResult = await query(
       `
       SELECT SUM("reserveAmount") as "reserveAmountSum", SUM(("returnAmount" - "repayAmount" - "reserveAmount")) as pnl, "endTime" 
       FROM unstake 
+      WHERE NOT "funds"=''
       GROUP BY "endTime"
       ORDER BY "endTime"
       `,
@@ -23,10 +25,8 @@ export const load: PageServerLoad = async () => {
     const unstakeAnalyticsData: UnstakeAnalytics[] = rows.map((row) => ({
       "Profit & Loss": row.pnl,
       "Reserve Amount": row.reserveAmountSum,
-      "time": row.endTime,
+      time: row.endTime,
     }));
-
-    console.log(unstakeAnalyticsData);
 
     return {
       unstakeAnalyticsData,

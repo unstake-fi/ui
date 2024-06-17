@@ -26,7 +26,7 @@ export function aggregateDataByDates(
 
   return Object.values(
     chartData
-      .filter((value) => Date.now() - value.x.getTime() <= msInRange(timeRange))
+      .filter((value) => value.x.getTime() >= minDate.getTime())
       .reduce((acc: { [key: string]: DateLineChartData }, current) => {
         const nearestDate = getNearestDate(current.x, timeRange);
         const timeKey = nearestDate.toISOString();
@@ -76,7 +76,6 @@ export function getNearestDate(date: Date, timeRange: TimeRange) {
 }
 
 export function getTooltipFormat(timeRange: TimeRange) {
-  console.log(timeRange);
   switch (timeRange) {
     case TimeRange["1D"]:
     case TimeRange["5D"]:

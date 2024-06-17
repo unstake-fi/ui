@@ -76,8 +76,6 @@
 
   $: if (chartData) {
     if (chart != null) {
-      console.log("Trying to update");
-      console.log(chartData);
       chart.data.datasets[0].data = chartData;
       chart.data.datasets[0].borderColor = graphColor;
       chart.data.datasets[0].backgroundColor = graphColor;

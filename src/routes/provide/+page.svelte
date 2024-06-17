@@ -12,21 +12,21 @@
   import WalletInfo from "$lib/components/WalletInfo.svelte";
   import ReserveMigration from "$lib/components/ReserveMigration.svelte";
   import type { PageData } from "./$types";
-  import sampleData from "./data.json";
   import DateLineChartWrapper from "$lib/graph/DateLineChartWrapper.svelte";
+  import { CONTROLLERS } from "@entropic-labs/unstake.js";
 
-  const formattedSampleData = sampleData.map((d) => ({
-    ...d,
-    time: new Date(d.time),
-  }));
-
-  let data: PageData = {
-    unstakeAnalyticsData: formattedSampleData,
+  export let data: PageData = {
+    unstakeAnalyticsData: [],
   };
 
   const pnlData = data.unstakeAnalyticsData.map((analytics) => ({
     x: analytics.time,
     y: analytics["Profit & Loss"],
+  }));
+
+  const reserveData = data.unstakeAnalyticsData.map((analytics) => ({
+    x: analytics.time,
+    y: analytics["Reserve Amount"],
   }));
 
   $: allReserves = Object.values(RESERVES[$savedNetwork.chainId]);
@@ -102,11 +102,21 @@
   </div>
 </div>
 
-<div class="flex w-full gap-2 items-center max justify-center flex-col">
-  <DateLineChartWrapper
-    chartData={pnlData}
-    datasetLabel={"Profit & Loss"}
-    yLabel="Value (KUJI)"
-    unit="KUJI"
-  />
+<div class="flex w-full items-center justify-center align-center flex-col">
+  <div
+    class="flex gap-2 w-6/12 items-center justify-center align-center flex-row"
+  >
+    <DateLineChartWrapper
+      chartData={pnlData}
+      datasetLabel={"Profit & Loss"}
+      yLabel="Value (SNUT)"
+      unit="SNUT"
+    />
+    <DateLineChartWrapper
+      chartData={reserveData}
+      datasetLabel={"Reserve Amounts"}
+      yLabel="Value (NUT)"
+      unit="NUT"
+    />
+  </div>
 </div>
