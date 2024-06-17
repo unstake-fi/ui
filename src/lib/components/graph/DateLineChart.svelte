@@ -3,7 +3,7 @@
   import Tick from "./Tick.svelte";
   import DateTooltip from "./DateTooltip.svelte";
   import { extent } from "d3";
-  import type { DateLineChartData, Range } from "./types";
+  import type { DateLineChartData, TimeRange } from "./types";
 
   const paddings = {
     top: 20,
@@ -24,45 +24,52 @@
 
   export let data: DateLineChartData[];
 
-  function msInRange(range: Range) {
-    switch (range) {
-      case "1D":
-        return 86400000;
-      case "5D":
-        return 432000000;
-      case "6M":
-        return 15778800000;
-      case "1Y":
-        return 31557600000;
-      case "MAX":
-        return Date.now();
-    }
-  }
-
   function getClosestDate(date: Date, range: Range) {
     const newDate = new Date(date.getTime());
     switch (range) {
       case "1D":
       case "5D":
+        // Per day
         newDate.setHours(0);
         newDate.setMinutes(0);
+        newDate.setSeconds(0);
         newDate.setMilliseconds(0);
         return newDate;
       case "6M":
       case "1Y":
       case "MAX":
+        // Per month
         newDate.setHours(0);
         newDate.setMinutes(0);
+        newDate.setSeconds(0);
         newDate.setMilliseconds(0);
         newDate.setDate(0);
         return newDate;
     }
   }
 
+  function getNextDate(date: Date, range: Range) {
+    switch (range) {
+      case "1D":
+      case "5D":
+        const tomorrowDate = new Date(date.getTime());
+        tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+        return tomorrowDate;
+      case "6M":
+      case "1Y":
+      case "MAX":
+        if (date.getMonth() == 11) {
+          return new Date(date.getFullYear() + 1, 0, 1);
+        } else {
+          return new Date(date.getFullYear(), date.getMonth() + 1, 1);
+        }
+    }
+  }
+
   function filterData(
     dateLineChartData: DateLineChartData[]
   ): DateLineChartData[] {
-    const range = "1Y";
+    const range = "6M";
 
     // Convert to local timezone
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -84,19 +91,38 @@
       time: getClosestDate(d.time, range),
     }));
 
-    const aggregatedDates = Object.values(roundedDates.reduce(
-      (acc: { [key: string]: DateLineChartData }, current) => {
-        const timeKey = current.time.toISOString();
+    const initialDates: { [key: string]: DateLineChartData } = {};
+    let currentDate = new Date(Date.now() - msInRange(range));
 
-        if (acc[timeKey] == null) {
-          acc[timeKey] = { y: 0, time: current.time };
-        }
-        acc[timeKey].y += current.y;
+    while (currentDate.getTime() < Date.now()) {
+      const timeKey = getClosestDate(currentDate, range).toISOString();
+      initialDates[timeKey] = {
+        y: 0,
+        time: getClosestDate(currentDate, range),
+      };
+      currentDate = getNextDate(currentDate, range);
+      console.log(currentDate);
+    }
 
-        return acc;
-      },
-      {}
-    )).sort((a, b) => a.time.getTime() - b.time.getTime());
+    console.log("initial");
+    console.log(initialDates);
+    console.log("rounded");
+
+    console.log(roundedDates);
+
+    const aggregatedDates = Object.values(
+      roundedDates.reduce(
+        (acc: { [key: string]: DateLineChartData }, current) => {
+          const timeKey = current.time.toISOString();
+          acc[timeKey].y += current.y;
+          return acc;
+        },
+        initialDates
+      )
+    ).sort((a, b) => a.time.getTime() - b.time.getTime());
+
+    console.log("aggreged");
+    console.log(aggregatedDates);
 
     return aggregatedDates;
   }

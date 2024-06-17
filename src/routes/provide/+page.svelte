@@ -15,9 +15,11 @@
   import DateLineChart from "$lib/components/graph/DateLineChart.svelte";
   import { ArrowUp } from "lucide-svelte";
   import sampleData from "./data.json";
-  import { Range } from "$lib/components/graph/types";
+  import { TimeRange } from "$lib/components/graph/types";
+  import LineChart from "$lib/components/graph/LineChart.svelte";
 
-  let graphRange = Range.MAX;
+  // TODO: Make graph range toggable
+  let graphTimeRange = TimeRange.MAX;
 
   const formattedSampleData = sampleData.map((d) => ({
     ...d,
@@ -29,7 +31,7 @@
   };
 
   const pnlData = data.unstakeAnalyticsData.map((analytics) => ({
-    time: analytics.time,
+    x: analytics.time,
     y: analytics["Profit & Loss"]
   }));
 
@@ -117,12 +119,13 @@
     <p class="text-sm text-green-600">
       +26.45 (14.25%) <ArrowUp class="inline" /> year to date
     </p>
-    <DateLineChart
+    <!-- <DateLineChart
       data={pnlData}
       yVarTitle={"Profit & Loss"}
       chartWidth={500}
       chartHeight={400}
       {graphRange}
-    />
+    /> -->
+    <LineChart chartData={pnlData} timeRange={graphTimeRange}/>
   </div>
 </div>
