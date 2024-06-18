@@ -83,7 +83,7 @@ export function getTooltipFormat(timeRange: TimeRange) {
     case TimeRange["6M"]:
     case TimeRange["1Y"]:
     case TimeRange.MAX:
-      return "MMMM YY";
+      return "MMMM YYYY";
   }
 }
 
