@@ -35,7 +35,7 @@
 </script>
 
 <div
-  class="flex flex-1 max-w-xl bg-stone-800 rounded-lg py-2 px-2.5 flex-col justify-start"
+  class="flex flex-1 bg-stone-800 rounded-lg py-2 px-2.5 flex-col justify-start"
 >
   <p class="text-md text-stone-400">{datasetLabel}</p>
   <p class="text-lg bold font-semibold">

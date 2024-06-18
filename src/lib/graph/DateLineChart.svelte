@@ -108,4 +108,4 @@
   }
 </script>
 
-<canvas bind:this={portfolio} width={400} height={400} />
+<canvas bind:this={portfolio} width={300} height={300} />

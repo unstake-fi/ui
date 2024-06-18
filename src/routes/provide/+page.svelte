@@ -14,20 +14,64 @@
   import type { PageData } from "./$types";
   import DateLineChartWrapper from "$lib/graph/DateLineChartWrapper.svelte";
   import { CONTROLLERS } from "@entropic-labs/unstake.js";
+  import type { DateLineChartData } from "$lib/graph/types";
+
+  type ControllerAnalytics = {
+    controller: string;
+    pnlData: DateLineChartData[];
+    reserveData: DateLineChartData[];
+    offerDenom: string;
+    askDenom: string;
+  };
 
   export let data: PageData = {
     unstakeAnalyticsData: [],
   };
 
-  const pnlData = data.unstakeAnalyticsData.map((analytics) => ({
-    x: analytics.time,
-    y: analytics["Profit & Loss"],
-  }));
+  const allControllers = Object.values(CONTROLLERS).reduce((acc, curr) => {
+    return {
+      ...acc,
+      ...curr,
+    };
+  }, {});
 
-  const reserveData = data.unstakeAnalyticsData.map((analytics) => ({
-    x: analytics.time,
-    y: analytics["Reserve Amount"],
-  }));
+  const allControllerAnalytics = Object.values(
+    data.unstakeAnalyticsData.reduce(
+      (acc: { [key: string]: ControllerAnalytics }, currentAnalytics) => {
+        const controller: string = currentAnalytics.controller;
+        if (acc[controller] == null) {
+          const splitOfferDenom = (
+            allControllers[controller]?.offer_denom || ""
+          ).split("/");
+          const splitAskDenom = (
+            allControllers[controller]?.ask_denom || ""
+          ).split("/");
+
+          acc[controller] = {
+            controller,
+            pnlData: [],
+            reserveData: [],
+            offerDenom:
+              splitOfferDenom[splitOfferDenom.length - 1].toLocaleUpperCase(),
+            askDenom:
+              splitAskDenom[splitAskDenom.length - 1].toLocaleUpperCase(),
+          };
+        }
+        acc[controller].pnlData.push({
+          x: currentAnalytics.time,
+          y: currentAnalytics["Profit & Loss"],
+        });
+
+        acc[controller].reserveData.push({
+          x: currentAnalytics.time,
+          y: currentAnalytics["Reserve Amount"],
+        });
+        return acc;
+      },
+      {}
+    )
+  );
+  console.log(allControllerAnalytics);
 
   $: allReserves = Object.values(RESERVES[$savedNetwork.chainId]);
 
@@ -102,21 +146,25 @@
   </div>
 </div>
 
-<div class="flex w-full items-center justify-center align-center flex-col">
-  <div
-    class="flex gap-2 w-6/12 items-center justify-center align-center flex-row"
-  >
-    <DateLineChartWrapper
-      chartData={pnlData}
-      datasetLabel={"Profit & Loss"}
-      yLabel="Value (SNUT)"
-      unit="SNUT"
-    />
-    <DateLineChartWrapper
-      chartData={reserveData}
-      datasetLabel={"Reserve Amounts"}
-      yLabel="Value (NUT)"
-      unit="NUT"
-    />
-  </div>
+<div
+  class="flex w-full items-center justify-center align-center flex-col gap-4 mb-10"
+>
+  {#each allControllerAnalytics as controllerAnalytics}
+    <div
+      class="flex gap-4 items-center justify-center align-center flex-col md:flex-row"
+    >
+      <DateLineChartWrapper
+        chartData={controllerAnalytics.pnlData}
+        datasetLabel={"Profit & Loss"}
+        yLabel={`Value ${controllerAnalytics.askDenom}`}
+        unit={controllerAnalytics.askDenom}
+      />
+      <DateLineChartWrapper
+        chartData={controllerAnalytics.reserveData}
+        datasetLabel={"Reserve Amounts"}
+        yLabel={`Value ${controllerAnalytics.offerDenom}`}
+        unit={controllerAnalytics.offerDenom}
+      />
+    </div>
+  {/each}
 </div>

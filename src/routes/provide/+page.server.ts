@@ -5,6 +5,7 @@ type UnstakeAnalytics = {
   "Profit & Loss": number;
   "Reserve Amount": number;
   time: Date;
+  controller: string;
 };
 
 export const load: PageServerLoad = async () => {
@@ -13,10 +14,10 @@ export const load: PageServerLoad = async () => {
     // for now, only completed unstake events are used to calculate PnL.
     const protocolHealthResult = await query(
       `
-      SELECT SUM("reserveAmount") as "reserveAmountSum", SUM(("returnAmount" - "repayAmount" - "reserveAmount")) as pnl, "endTime" 
+      SELECT SUM("reserveAmount") as "reserveAmountSum", SUM(("returnAmount" - "repayAmount" - "reserveAmount")) as pnl, "endTime", "controller" 
       FROM unstake 
-      WHERE NOT "funds"=''
-      GROUP BY "endTime"
+      WHERE (NOT "funds"='') AND (NOT "controller"='')
+      GROUP BY "endTime", "controller"
       ORDER BY "endTime"
       `,
       []
@@ -26,6 +27,7 @@ export const load: PageServerLoad = async () => {
       "Profit & Loss": row.pnl,
       "Reserve Amount": row.reserveAmountSum,
       time: row.endTime,
+      controller: row.controller
     }));
 
     return {
