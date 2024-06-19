@@ -42,6 +42,8 @@ export function msInRange(timeRange: TimeRange) {
       return 86400000;
     case TimeRange["5D"]:
       return 432000000;
+    case TimeRange["2W"]:
+      return 1209600000;
     case TimeRange["6M"]:
       return 15778800000;
     case TimeRange["1Y"]:
@@ -56,6 +58,7 @@ export function getNearestDate(date: Date, timeRange: TimeRange) {
   switch (timeRange) {
     case TimeRange["1D"]:
     case TimeRange["5D"]:
+    case TimeRange["2W"]:
       // Round to the nearest day
       nearestDate.setHours(0);
       nearestDate.setMinutes(0);
@@ -79,6 +82,7 @@ export function getTooltipFormat(timeRange: TimeRange) {
   switch (timeRange) {
     case TimeRange["1D"]:
     case TimeRange["5D"]:
+    case TimeRange["2W"]:
       return "MMMM Do YYYY";
     case TimeRange["6M"]:
     case TimeRange["1Y"]:
@@ -93,6 +97,8 @@ export function getRangeText(timeRange: TimeRange) {
       return "past day";
     case TimeRange["5D"]:
       return "past 5 days";
+    case TimeRange["2W"]:
+      return "past 2 weeks";
     case TimeRange["6M"]:
       return "past 6 months";
     case TimeRange["1Y"]:

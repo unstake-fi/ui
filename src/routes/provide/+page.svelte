@@ -15,6 +15,7 @@
   import DateLineChartWrapper from "$lib/graph/DateLineChartWrapper.svelte";
   import { CONTROLLERS } from "@entropic-labs/unstake.js";
   import type { DateLineChartData } from "$lib/graph/types";
+  import { DENOMS } from "$lib/resources/denoms";
 
   type ControllerAnalytics = {
     controller: string;
@@ -39,32 +40,34 @@
     data.unstakeAnalyticsData.reduce(
       (acc: { [key: string]: ControllerAnalytics }, currentAnalytics) => {
         const controller: string = currentAnalytics.controller;
-        if (acc[controller] == null) {
-          const splitOfferDenom = (
-            allControllers[controller]?.offer_denom || ""
-          ).split("/");
-          const splitAskDenom = (
-            allControllers[controller]?.ask_denom || ""
-          ).split("/");
 
+        const nonNullOfferDenom = allControllers[controller]?.offer_denom || "";
+        const nonNullAskDenom = allControllers[controller]?.ask_denom || "";
+
+        const offerDenomInfo = DENOMS[nonNullOfferDenom];
+        const askDenomInfo = DENOMS[nonNullAskDenom];
+
+        if (acc[controller] == null) {
           acc[controller] = {
             controller,
             pnlData: [],
             reserveData: [],
-            offerDenom:
-              splitOfferDenom[splitOfferDenom.length - 1].toLocaleUpperCase(),
-            askDenom:
-              splitAskDenom[splitAskDenom.length - 1].toLocaleUpperCase(),
+            offerDenom: offerDenomInfo.name,
+            askDenom: askDenomInfo.name,
           };
         }
+
+        const pnlDenominator = Math.pow(10, offerDenomInfo.dec);
+        const reserveAmountDenominator = Math.pow(10, askDenomInfo.dec);
+
         acc[controller].pnlData.push({
           x: currentAnalytics.time,
-          y: currentAnalytics["Profit & Loss"],
+          y: currentAnalytics["Profit & Loss"] / pnlDenominator,
         });
 
         acc[controller].reserveData.push({
           x: currentAnalytics.time,
-          y: currentAnalytics["Reserve Amount"],
+          y: currentAnalytics["Reserve Amount"] / reserveAmountDenominator,
         });
         return acc;
       },

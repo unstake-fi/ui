@@ -10,6 +10,8 @@
   export let yLabel: string;
   export let unit: string;
 
+  const DECIMAL_DIGITS_FIXED = 5;
+
   let timeRange: TimeRange = TimeRange["5D"];
   let aggregatedDates: DateLineChartData[] = [];
   let graphColor = "gray";
@@ -39,7 +41,9 @@
 >
   <p class="text-md text-stone-400">{datasetLabel}</p>
   <p class="text-lg bold font-semibold">
-    {latestValue.toFixed(2)}<span class="font-normal">{" "}{unit}</span>
+    {latestValue.toFixed(DECIMAL_DIGITS_FIXED)}<span class="font-normal"
+      >{" "}{unit}</span
+    >
   </p>
   <p
     class={`text-sm ${
@@ -50,8 +54,8 @@
           : "text-[#c03232]"
     }`}
   >
-    {difference.toFixed(2)} ({earliestValue !== 0
-      ? ((difference / earliestValue) * 100).toFixed(2)
+    {difference.toFixed(DECIMAL_DIGITS_FIXED)} ({earliestValue !== 0
+      ? ((difference / earliestValue) * 100).toFixed(DECIMAL_DIGITS_FIXED)
       : "-"}%)
     {#if difference > 0}
       <ArrowUp class="inline" />
@@ -67,6 +71,10 @@
     <button
       class={`${timeRange === TimeRange["5D"] ? "text-blue-500 underline" : "text-stone-400"} border-r-2 px-2 border-stone-400`}
       on:click={() => setTimeRange(TimeRange["5D"])}>5D</button
+    >
+    <button
+      class={`${timeRange === TimeRange["2W"] ? "text-blue-500 underline" : "text-stone-400"} border-r-2 px-2 border-stone-400`}
+      on:click={() => setTimeRange(TimeRange["2W"])}>2W</button
     >
     <button
       class={`${timeRange === TimeRange["6M"] ? "text-blue-500 underline" : "text-stone-400"} border-r-2 px-2 border-stone-400`}
