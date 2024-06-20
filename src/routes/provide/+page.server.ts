@@ -31,6 +31,8 @@ export const load: PageServerLoad = async () => {
       controller: row.controller,
     }));
 
+    console.log(unstakeAnalyticsData)
+
     return {
       unstakeAnalyticsData,
     };

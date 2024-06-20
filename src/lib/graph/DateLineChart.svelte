@@ -27,11 +27,20 @@
     ],
   };
 
+  // TODO: show decimal as a part of tooltip
   const config = {
     type: "line",
     data,
     options: {
-      plugins: {},
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function (context: any) {
+              return `${context.parsed.y} ${unit}`;
+            },
+          },
+        },
+      },
       scales: {
         x: {
           type: "time",
@@ -45,9 +54,6 @@
             display: true,
             text: "Date",
           },
-          ticks: {
-            // maxTicksLimit: 5,
-          },
         },
         y: {
           grid: {
@@ -60,7 +66,7 @@
         },
       },
     },
-  };
+  } as const;
 
   onMount(() => {
     if (portfolio == null) {

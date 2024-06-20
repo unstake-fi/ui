@@ -21,13 +21,14 @@ export function aggregateDataByDates(
       y: 0,
       x: nearestDate,
     };
-    currentDate = new Date(currentDate.getTime() + 60 * 60 * 1000);
+    currentDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
   }
 
   return Object.values(
     chartData
       .filter((value) => value.x.getTime() >= minDate.getTime())
       .reduce((acc: { [key: string]: DateLineChartData }, current) => {
+        console.log(current.x)
         const nearestDate = getNearestDate(current.x, timeRange);
         const timeKey = nearestDate.toISOString();
         acc[timeKey].y += current.y;

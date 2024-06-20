@@ -10,19 +10,20 @@
   export let yLabel: string;
   export let unit: string;
 
-  const DECIMAL_DIGITS_FIXED = 5;
+  const DECIMAL_DIGITS_FIXED = 6;
 
   let timeRange: TimeRange = TimeRange["5D"];
   let aggregatedDates: DateLineChartData[] = [];
   let graphColor = "gray";
   let earliestValue = 0;
-  let latestValue = 0;
+  let totalValue = 0;
   let difference = 0;
 
   function updateGraph() {
     aggregatedDates = aggregateDataByDates(chartData, timeRange);
     earliestValue = aggregatedDates[0].y;
-    latestValue = aggregatedDates[aggregatedDates.length - 1].y;
+    let latestValue = aggregatedDates[aggregatedDates.length - 1].y;
+    totalValue = aggregatedDates.reduce((acc, curr) => acc + curr.y, 0);
     difference = latestValue - earliestValue;
     graphColor =
       difference === 0 ? "gray" : difference > 0 ? "#15803d" : "#B91C1C";
@@ -41,7 +42,7 @@
 >
   <p class="text-md text-stone-400">{datasetLabel}</p>
   <p class="text-lg bold font-semibold">
-    {latestValue.toFixed(DECIMAL_DIGITS_FIXED)}<span class="font-normal"
+    {totalValue.toFixed(DECIMAL_DIGITS_FIXED)}<span class="font-normal"
       >{" "}{unit}</span
     >
   </p>

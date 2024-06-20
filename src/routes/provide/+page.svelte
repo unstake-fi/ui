@@ -74,7 +74,6 @@
       {}
     )
   );
-  console.log(allControllerAnalytics);
 
   $: allReserves = Object.values(RESERVES[$savedNetwork.chainId]);
 
