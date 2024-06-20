@@ -26,9 +26,12 @@ export function aggregateDataByDates(
 
   return Object.values(
     chartData
-      .filter((value) => value.x.getTime() >= minDate.getTime())
+      .filter(
+        (value) =>
+          value.x.getTime() >= minDate.getTime() &&
+          value.x.getTime() <= Date.now()
+      )
       .reduce((acc: { [key: string]: DateLineChartData }, current) => {
-        console.log(current.x)
         const nearestDate = getNearestDate(current.x, timeRange);
         const timeKey = nearestDate.toISOString();
         acc[timeKey].y += current.y;

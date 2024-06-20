@@ -1,18 +1,14 @@
 import { postgresQuery } from "$lib/postgres";
 import type { PageServerLoad } from "./$types";
-
-type UnstakeAnalytics = {
-  "Profit & Loss": number;
-  "Reserve Amount": number;
-  time: Date;
-  controller: string;
-};
+import type {
+  UnstakeAnalytics,
+  IncompleteUnstakeAnalytics,
+} from "$lib/analytics/types";
 
 export const load: PageServerLoad = async () => {
   try {
-    // TODO: use interest rates to calculate PNL for uncompleted unstake events
-    // for now, only completed unstake events are used to calculate PnL.
-    const protocolHealthResult = await postgresQuery(
+    // Query necessary data to calculate analytics for completed Unstake events
+    const completedEventAnalytics = await postgresQuery(
       `
       SELECT SUM("reserveAmount") as "reserveAmountSum", SUM(("returnAmount" - "repayAmount" - "reserveAmount")) as pnl, "endTime", "controller" 
       FROM unstake 
@@ -23,7 +19,29 @@ export const load: PageServerLoad = async () => {
       []
     );
 
-    const rows = protocolHealthResult.rows;
+    // Query necessary data to calculate analytics for Unstake events that haven't ended
+    const startedEventAnalytics = await postgresQuery(
+      `
+      SELECT "reserveAmount", "vaultDebt", "debtAmount", "providerRedemption","unbondAmount",  "startTime", "controller" 
+      FROM unstake 
+      WHERE (NOT "startBlockHeight"=0) AND ("endBlockHeight"=0) AND (NOT "controller"='')
+      ORDER BY "startTime"
+      `,
+      []
+    );
+
+    const incompleteUnstakeAnalytics: IncompleteUnstakeAnalytics[] =
+      startedEventAnalytics.rows.map((row) => ({
+        controller: row.controller,
+        debtAmount: row.debtAmount,
+        providerRedemption: row.providerRedemption,
+        reserveAmount: row.reserveAmount,
+        startTime: row.startTime,
+        unbondAmount: row.unbondAmount,
+        vaultDebt: row.vaultDebt,
+      }));
+
+    const rows = completedEventAnalytics.rows;
     const unstakeAnalyticsData: UnstakeAnalytics[] = rows.map((row) => ({
       "Profit & Loss": row.pnl,
       "Reserve Amount": row.reserveAmountSum,
@@ -31,15 +49,15 @@ export const load: PageServerLoad = async () => {
       controller: row.controller,
     }));
 
-    console.log(unstakeAnalyticsData)
-
     return {
       unstakeAnalyticsData,
+      incompleteUnstakeAnalytics,
     };
   } catch (err) {
     console.error(err);
     return {
       unstakeAnalyticsData: [],
+      incompleteUnstakeAnalytics: [],
     };
   }
 };

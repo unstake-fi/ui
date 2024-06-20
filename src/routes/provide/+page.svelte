@@ -13,74 +13,43 @@
   import ReserveMigration from "$lib/components/ReserveMigration.svelte";
   import type { PageData } from "./$types";
   import DateLineChartWrapper from "$lib/graph/DateLineChartWrapper.svelte";
-  import { CONTROLLERS } from "@entropic-labs/unstake.js";
-  import type { DateLineChartData } from "$lib/graph/types";
-  import { DENOMS } from "$lib/resources/denoms";
-
-  type ControllerAnalytics = {
-    controller: string;
-    pnlData: DateLineChartData[];
-    reserveData: DateLineChartData[];
-    offerDenom: string;
-    askDenom: string;
-  };
+  import {
+    calculateIncompleteUnstakeEventPnL,
+    gatherUnstakeAnalyticsByController,
+  } from "$lib/analytics/utils";
 
   export let data: PageData = {
     unstakeAnalyticsData: [],
+    incompleteUnstakeAnalytics: [],
   };
 
-  const allControllers = Object.values(CONTROLLERS).reduce((acc, curr) => {
-    return {
-      ...acc,
-      ...curr,
-    };
-  }, {});
-
-  const allControllerAnalytics = Object.values(
-    data.unstakeAnalyticsData.reduce(
-      (acc: { [key: string]: ControllerAnalytics }, currentAnalytics) => {
-        const controller: string = currentAnalytics.controller;
-
-        const nonNullOfferDenom = allControllers[controller]?.offer_denom || "";
-        const nonNullAskDenom = allControllers[controller]?.ask_denom || "";
-
-        const offerDenomInfo = DENOMS[nonNullOfferDenom];
-        const askDenomInfo = DENOMS[nonNullAskDenom];
-
-        if (acc[controller] == null) {
-          acc[controller] = {
-            controller,
-            pnlData: [],
-            reserveData: [],
-            offerDenom: offerDenomInfo.name,
-            askDenom: askDenomInfo.name,
-          };
-        }
-
-        const pnlDenominator = Math.pow(10, offerDenomInfo.dec);
-        const reserveAmountDenominator = Math.pow(10, askDenomInfo.dec);
-
-        acc[controller].pnlData.push({
-          x: currentAnalytics.time,
-          y: currentAnalytics["Profit & Loss"] / pnlDenominator,
-        });
-
-        acc[controller].reserveData.push({
-          x: currentAnalytics.time,
-          y: currentAnalytics["Reserve Amount"] / reserveAmountDenominator,
-        });
-        return acc;
-      },
-      {}
-    )
-  );
-
   $: allReserves = Object.values(RESERVES[$savedNetwork.chainId]);
+
+  const allControllerAnalytics = refreshing(
+    async () => {
+      const incompleteUnstakeEventAnalyticsData =
+        await calculateIncompleteUnstakeEventPnL(
+          data.incompleteUnstakeAnalytics,
+          client
+        );
+
+      const unstakeEventAnalytics = gatherUnstakeAnalyticsByController([
+        ...data.unstakeAnalyticsData,
+        ...incompleteUnstakeEventAnalyticsData,
+      ]);
+
+      return unstakeEventAnalytics;
+    },
+    {
+      refreshOn: [client],
+    }
+  );
 
   const reserveStatuses = refreshing(
     async () => {
       let c = await get(client);
       if (!c) return {};
+
       let statuses = await Promise.all(
         allReserves.map(async (reserve) => {
           let status = await c.wasm.queryContractSmart(reserve.address, {
@@ -148,25 +117,35 @@
   </div>
 </div>
 
-<div
-  class="flex w-full items-center justify-center align-center flex-col gap-4 mb-10"
->
-  {#each allControllerAnalytics as controllerAnalytics}
+{#await $allControllerAnalytics then completeControllerAnalytics}
+  {#if completeControllerAnalytics.length > 0}
     <div
-      class="flex gap-4 items-center justify-center align-center flex-col md:flex-row"
+      class="flex w-full items-center justify-center align-center flex-col gap-4 mb-10"
     >
-      <DateLineChartWrapper
-        chartData={controllerAnalytics.pnlData}
-        datasetLabel={"Profit & Loss"}
-        yLabel={`Value ${controllerAnalytics.askDenom}`}
-        unit={controllerAnalytics.askDenom}
-      />
-      <DateLineChartWrapper
-        chartData={controllerAnalytics.reserveData}
-        datasetLabel={"Reserve Amounts"}
-        yLabel={`Value ${controllerAnalytics.offerDenom}`}
-        unit={controllerAnalytics.offerDenom}
-      />
+      {#each completeControllerAnalytics as controllerAnalytics}
+        <div
+          class="flex gap-4 items-center justify-center align-center flex-col md:flex-row"
+        >
+          <DateLineChartWrapper
+            chartData={controllerAnalytics.pnlData}
+            datasetLabel={"Profit & Loss"}
+            yLabel={`Value ${controllerAnalytics.askDenom}`}
+            unit={controllerAnalytics.askDenom}
+          />
+          <DateLineChartWrapper
+            chartData={controllerAnalytics.reserveData}
+            datasetLabel={"Reserve Amounts"}
+            yLabel={`Value ${controllerAnalytics.offerDenom}`}
+            unit={controllerAnalytics.offerDenom}
+          />
+        </div>
+      {/each}
     </div>
-  {/each}
-</div>
+  {:else}
+    <div class="max-w-prose mx-auto">
+      <div class="flex flex-col justify-center w-full my-4 gap-4">
+        <p class="text-left">No analytics are available.</p>
+      </div>
+    </div>
+  {/if}
+{/await}
