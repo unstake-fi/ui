@@ -10,6 +10,7 @@
   export let yLabel: string;
   export let unit: string;
   export let digitsToRound: number = 6;
+  export let shouldShowKeepFutureToggle = false;
 
   let timeRange: TimeRange = TimeRange["5D"];
   let aggregatedDates: DateLineChartData[] = [];
@@ -17,9 +18,15 @@
   let earliestValue = 0;
   let totalValue = 0;
   let difference = 0;
+  let shouldKeepFuture = false;
 
   function updateGraph() {
-    aggregatedDates = aggregateDataByDates(chartData, timeRange);
+    aggregatedDates = aggregateDataByDates({
+      chartData,
+      timeRange,
+      shouldKeepFuture,
+    });
+    // TODO: test out shouldKeepFuture
     earliestValue = aggregatedDates[0].y;
     let latestValue = aggregatedDates[aggregatedDates.length - 1].y;
     totalValue = aggregatedDates.reduce((acc, curr) => acc + curr.y, 0);
@@ -33,6 +40,11 @@
     updateGraph();
   }
 
+  function toggleShouldKeepFuture() {
+    shouldKeepFuture = !shouldKeepFuture;
+    updateGraph();
+  }
+
   updateGraph();
 </script>
 
@@ -40,6 +52,7 @@
   class="flex flex-1 bg-stone-800 rounded-lg py-2 px-2.5 flex-col justify-start"
 >
   <p class="text-md text-stone-400">{datasetLabel}</p>
+
   <p class="text-lg bold font-semibold">
     {totalValue.toFixed(digitsToRound)}<span class="font-normal"
       >{" "}{unit}</span
@@ -97,6 +110,22 @@
     {unit}
     {graphColor}
     {timeRange}
-    verticalLineIdx={aggregatedDates.length-1}
+    verticalLineIdx={aggregatedDates.length - 1}
   />
+  {#if shouldShowKeepFutureToggle}
+    <label class="inline-flex items-center cursor-pointer justify-center">
+      <input
+        type="checkbox"
+        value=""
+        class="sr-only peer"
+        on:click={toggleShouldKeepFuture}
+      />
+      <div
+        class="relative w-11 h-6 bg-stone-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+      ></div>
+      <span class="ms-3 text-sm font-medium text-stone-400"
+        >Show Predicted Future</span
+      >
+    </label>
+  {/if}
 </div>

@@ -121,7 +121,7 @@
           lines: [
             {
               pointIndex: verticalLineIdx,
-              label: "Today",
+              label: "Now",
               color: "#eab308",
               nPoints: chartData.length,
             },
@@ -177,7 +177,7 @@
         lines: [
           {
             pointIndex: verticalLineIdx,
-            label: "Today",
+            label: "Now",
             color: "#eab308",
             nPoints: chartData.length,
           },

@@ -33,9 +33,6 @@
           client
         );
 
-      console.log(data.unstakeAnalyticsData);
-      console.log(incompleteUnstakeEventAnalyticsData);
-
       const unstakeEventAnalytics = gatherUnstakeAnalyticsByController([
         ...data.unstakeAnalyticsData,
         ...incompleteUnstakeEventAnalyticsData,
@@ -115,7 +112,7 @@
 </div>
 
 <div class="max-w-prose mx-auto">
-  <div class="flex flex-col justify-center w-full my-4 gap-4">
+  <div class="flex flex-row justify-start w-full my-4 gap-7">
     <h1 class="text-2xl xs:text-3xl md:text-4xl">Analytics</h1>
   </div>
 </div>
@@ -125,30 +122,37 @@
     <div
       class="flex w-full items-center justify-center align-center flex-col gap-4 mb-10"
     >
-      {#each completeControllerAnalytics as controllerAnalytics}
+      {#each completeControllerAnalytics as controllerAnalytics, idx}
+        <p class="text-md xs:text-lg md:text-xl text-stone-300">
+          {controllerAnalytics.askDenom} → {controllerAnalytics.offerDenom}
+        </p>
         <div
-          class="flex gap-4 items-center justify-center align-center flex-col md:flex-row"
+          class="flex gap-4 items-center justify-center items-baseline flex-col lg:flex-row"
         >
           <DateLineChartWrapper
             chartData={controllerAnalytics.frequency}
-            datasetLabel={"Unstake Frequency"}
+            datasetLabel={`Frequency`}
             yLabel={`Frequency`}
             unit={"Events"}
             digitsToRound={0}
           />
           <DateLineChartWrapper
             chartData={controllerAnalytics.pnlData}
-            datasetLabel={"Profit & Loss"}
+            datasetLabel={`Profit & Loss`}
             yLabel={`Value ${controllerAnalytics.askDenom}`}
             unit={controllerAnalytics.askDenom}
+            shouldShowKeepFutureToggle
           />
           <DateLineChartWrapper
             chartData={controllerAnalytics.reserveData}
-            datasetLabel={"Reserve Amounts"}
+            datasetLabel={`Reserve Amounts`}
             yLabel={`Value ${controllerAnalytics.offerDenom}`}
             unit={controllerAnalytics.offerDenom}
           />
         </div>
+        {#if idx < completeControllerAnalytics.length - 1}
+          <div class="w-6/12 bg-stone-800 h-1 rounded" />
+        {/if}
       {/each}
     </div>
   {:else}

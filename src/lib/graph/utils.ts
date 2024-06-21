@@ -3,10 +3,15 @@ import { TimeRange, type DateLineChartData } from "./types";
 /**
  * Returns data within the time range and sums data values that belong to the same nearby date
  */
-export function aggregateDataByDates(
-  chartData: DateLineChartData[],
-  timeRange: TimeRange
-) {
+export function aggregateDataByDates({
+  chartData,
+  timeRange,
+  shouldKeepFuture,
+}: {
+  chartData: DateLineChartData[];
+  timeRange: TimeRange;
+  shouldKeepFuture: boolean;
+}) {
   const initialDates: { [key: string]: DateLineChartData } = {};
   const minDate = getNearestDate(
     new Date(Date.now() - msInRange(timeRange)),
@@ -14,7 +19,12 @@ export function aggregateDataByDates(
   );
 
   let currentDate = minDate;
-  while (currentDate.getTime() < Date.now()) {
+  const maxDateTime = Math.max(...chartData.map((data) => data.x.getTime()));
+  const endDateTime = shouldKeepFuture
+    ? Math.max(Date.now(), maxDateTime + 24 * 60 * 60 * 1000)
+    : Date.now();
+
+  while (currentDate.getTime() <= endDateTime) {
     const nearestDate = getNearestDate(currentDate, timeRange);
     const timeKey = nearestDate.toISOString();
     initialDates[timeKey] = {
@@ -29,7 +39,7 @@ export function aggregateDataByDates(
       .filter(
         (value) =>
           value.x.getTime() >= minDate.getTime() &&
-          value.x.getTime() <= Date.now()
+          (shouldKeepFuture || value.x.getTime() <= Date.now())
       )
       .reduce((acc: { [key: string]: DateLineChartData }, current) => {
         const nearestDate = getNearestDate(current.x, timeRange);

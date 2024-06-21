@@ -49,17 +49,17 @@ export function gatherUnstakeAnalyticsByController(
         const reserveAmountDenominator = Math.pow(10, askDenomInfo.dec);
 
         acc[controller].pnlData.push({
-          x: currentAnalytics.time,
+          x: currentAnalytics.endTime,
           y: currentAnalytics["Profit & Loss"] / pnlDenominator,
         });
 
         acc[controller].reserveData.push({
-          x: currentAnalytics.time,
+          x: currentAnalytics.startTime,
           y: currentAnalytics["Reserve Amount"] / reserveAmountDenominator,
         });
 
         acc[controller].frequency.push({
-          x: currentAnalytics.time,
+          x: currentAnalytics.startTime,
           y: 1,
         });
 
@@ -161,18 +161,20 @@ export async function calculateIncompleteUnstakeEventPnL(
 
       const expectedDebt = debtAmountSoFar;
 
-      console.log(reserveAmount);
-      console.log(expectedReturn);
-      console.log(expectedDebt);
-      console.log(reserveAmount);
-      console.log("---------------");
+      // TODO: debug values below
+      // console.log(reserveAmount);
+      // console.log(expectedReturn);
+      // console.log(expectedDebt);
+      // console.log(reserveAmount);
+      // console.log("---------------");
 
       const expectedPnl = expectedReturn - expectedDebt - reserveAmount;
 
       return {
         "Profit & Loss": expectedPnl,
         "Reserve Amount": reserveAmount,
-        time: new Date(startTime.getTime() + unbondTimeMs),
+        startTime: startTime,
+        endTime: new Date(startTime.getTime() + unbondTimeMs),
         controller,
       };
     }

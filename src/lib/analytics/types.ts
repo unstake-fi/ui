@@ -13,7 +13,8 @@ export type IncompleteUnstakeAnalytics = {
 export type UnstakeAnalytics = {
   "Profit & Loss": number;
   "Reserve Amount": number;
-  time: Date;
+  startTime: Date;
+  endTime: Date;
   controller: string;
 };
 
