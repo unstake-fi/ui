@@ -29,14 +29,14 @@ export const aminoTypes = (prefix: string): s.AminoTypes =>
 
 export function localeDecimalSep() {
     return Intl.NumberFormat()
-        .formatToParts(1.1)
+        .formatToParts(10000.1)
         .find(part => part.type === 'decimal')
         ?.value ?? '.';
 }
 
 export function localeThousandsSep() {
     return Intl.NumberFormat()
-        .formatToParts(1000)
+        .formatToParts(10000.1)
         .find(part => part.type === 'group')
         ?.value ?? ',';
 }
