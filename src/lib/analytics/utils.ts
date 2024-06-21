@@ -10,6 +10,7 @@ import { savedNetwork } from "$lib/network/stores";
 import type { KujiraClient } from "$lib/network/types";
 import type { Refreshing } from "$lib/refreshing";
 
+// Generates PnL and Reserve Amount statistics for each controller that belongs to the current chainId
 export function gatherUnstakeAnalyticsByController(
   unstakeAnalyticsData: UnstakeAnalytics[]
 ) {
@@ -40,6 +41,7 @@ export function gatherUnstakeAnalyticsByController(
             reserveData: [],
             offerDenom: offerDenomInfo.name,
             askDenom: askDenomInfo.name,
+            frequency: [],
           };
         }
 
@@ -55,6 +57,12 @@ export function gatherUnstakeAnalyticsByController(
           x: currentAnalytics.time,
           y: currentAnalytics["Reserve Amount"] / reserveAmountDenominator,
         });
+
+        acc[controller].frequency.push({
+          x: currentAnalytics.time,
+          y: 1,
+        });
+
         return acc;
       },
       {}
@@ -62,8 +70,9 @@ export function gatherUnstakeAnalyticsByController(
   );
 }
 
+// Gets controlled vault debts that are a part of the client's chain id
 async function getControlledVaultDebts(
-  incompleteUnstakeAnalytics: IncompleteUnstakeAnalytics[],
+  controllers: string[],
   client: Refreshing<KujiraClient>
 ) {
   const { chainId } = get(savedNetwork);
@@ -71,13 +80,9 @@ async function getControlledVaultDebts(
   if (c == null) return {};
 
   // Query unbondTime for each controller
-  const uniqueControllers = uniqueList(
-    incompleteUnstakeAnalytics.map((value) => value.controller)
-  );
-
   const controlledVaultDebts = (
     await Promise.all(
-      uniqueControllers.map(async (controller) => {
+      controllers.map(async (controller) => {
         const controllerAddress =
           CONTROLLERS[chainId][controller]?.vault_address;
 
@@ -112,12 +117,17 @@ async function getControlledVaultDebts(
   return controlledVaultDebts;
 }
 
+// Calculates PnL for unstake events with controllers belonging to the client's chain id
 export async function calculateIncompleteUnstakeEventPnL(
   incompleteUnstakeAnalytics: IncompleteUnstakeAnalytics[],
   client: Refreshing<KujiraClient>
 ): Promise<UnstakeAnalytics[]> {
+  const uniqueControllers = uniqueList(
+    incompleteUnstakeAnalytics.map((value) => value.controller)
+  );
+
   const controlledVaultDebts = await getControlledVaultDebts(
-    incompleteUnstakeAnalytics,
+    uniqueControllers,
     client
   );
 
@@ -150,6 +160,13 @@ export async function calculateIncompleteUnstakeEventPnL(
       const unbondTimeMs = 14 * 24 * 60 * 60 * 1000;
 
       const expectedDebt = debtAmountSoFar;
+
+      console.log(reserveAmount);
+      console.log(expectedReturn);
+      console.log(expectedDebt);
+      console.log(reserveAmount);
+      console.log("---------------");
+
       const expectedPnl = expectedReturn - expectedDebt - reserveAmount;
 
       return {

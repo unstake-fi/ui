@@ -18,9 +18,10 @@ export type UnstakeAnalytics = {
 };
 
 export type ControllerAnalytics = {
-    controller: string;
-    pnlData: DateLineChartData[];
-    reserveData: DateLineChartData[];
-    offerDenom: string;
-    askDenom: string;
-  };
+  controller: string;
+  pnlData: DateLineChartData[];
+  reserveData: DateLineChartData[];
+  frequency: DateLineChartData[];
+  offerDenom: string;
+  askDenom: string;
+};

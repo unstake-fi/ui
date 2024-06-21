@@ -9,8 +9,7 @@
   export let datasetLabel: string;
   export let yLabel: string;
   export let unit: string;
-
-  const DECIMAL_DIGITS_FIXED = 6;
+  export let digitsToRound: number = 6;
 
   let timeRange: TimeRange = TimeRange["5D"];
   let aggregatedDates: DateLineChartData[] = [];
@@ -42,7 +41,7 @@
 >
   <p class="text-md text-stone-400">{datasetLabel}</p>
   <p class="text-lg bold font-semibold">
-    {totalValue.toFixed(DECIMAL_DIGITS_FIXED)}<span class="font-normal"
+    {totalValue.toFixed(digitsToRound)}<span class="font-normal"
       >{" "}{unit}</span
     >
   </p>
@@ -55,8 +54,8 @@
           : "text-[#c03232]"
     }`}
   >
-    {difference.toFixed(DECIMAL_DIGITS_FIXED)} ({earliestValue !== 0
-      ? ((difference / earliestValue) * 100).toFixed(DECIMAL_DIGITS_FIXED)
+    {difference.toFixed(digitsToRound)} ({earliestValue !== 0
+      ? ((difference / earliestValue) * 100).toFixed(digitsToRound)
       : "-"}%)
     {#if difference > 0}
       <ArrowUp class="inline" />
@@ -98,5 +97,6 @@
     {unit}
     {graphColor}
     {timeRange}
+    verticalLineIdx={aggregatedDates.length-1}
   />
 </div>

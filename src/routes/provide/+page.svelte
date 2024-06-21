@@ -33,6 +33,9 @@
           client
         );
 
+      console.log(data.unstakeAnalyticsData);
+      console.log(incompleteUnstakeEventAnalyticsData);
+
       const unstakeEventAnalytics = gatherUnstakeAnalyticsByController([
         ...data.unstakeAnalyticsData,
         ...incompleteUnstakeEventAnalyticsData,
@@ -126,6 +129,13 @@
         <div
           class="flex gap-4 items-center justify-center align-center flex-col md:flex-row"
         >
+          <DateLineChartWrapper
+            chartData={controllerAnalytics.frequency}
+            datasetLabel={"Unstake Frequency"}
+            yLabel={`Frequency`}
+            unit={"Events"}
+            digitsToRound={0}
+          />
           <DateLineChartWrapper
             chartData={controllerAnalytics.pnlData}
             datasetLabel={"Profit & Loss"}
