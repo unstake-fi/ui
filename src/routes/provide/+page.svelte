@@ -23,6 +23,8 @@
     incompleteUnstakeAnalytics: [],
   };
 
+  let selectedController = "";
+
   $: allReserves = Object.values(RESERVES[$savedNetwork.chainId]);
 
   const allControllerAnalytics = refreshing(
@@ -35,8 +37,12 @@
 
       const unstakeEventAnalytics = gatherUnstakeAnalyticsByController([
         ...data.unstakeAnalyticsData,
-        ...incompleteUnstakeEventAnalyticsData,
+        // ...incompleteUnstakeEventAnalyticsData,
       ]);
+
+      if (unstakeEventAnalytics.length > 0) {
+        selectedController = unstakeEventAnalytics[0].controller;
+      }
 
       return unstakeEventAnalytics;
     },
@@ -112,46 +118,64 @@
 </div>
 
 <div class="max-w-prose mx-auto">
-  <div class="flex flex-row justify-start w-full my-4 gap-7">
+  <div class="flex flex-row justify-between w-full my-4 gap-7">
     <h1 class="text-2xl xs:text-3xl md:text-4xl">Analytics</h1>
+    {#await $allControllerAnalytics then completeControllerAnalytics}
+      {#if completeControllerAnalytics.length > 0}
+        <select
+          class="text-right bg-neutral-800 border-[#525252] border text-md focus:ring-blue-500 focus:border-blue-500 rounded px-1 py-2"
+          name="pets"
+          id="denom-select"
+          bind:value={selectedController}
+        >
+          {#each completeControllerAnalytics as controllerAnalytics}
+            <option value={controllerAnalytics.controller}
+              >{controllerAnalytics.askDenom} → {controllerAnalytics.offerDenom}</option
+            >
+          {/each}
+        </select>
+      {/if}
+    {/await}
   </div>
 </div>
 
 {#await $allControllerAnalytics then completeControllerAnalytics}
   {#if completeControllerAnalytics.length > 0}
+    {#if selectedController === ""}
+      <div class="max-w-prose mx-auto">
+        <div class="flex flex-row justify-start w-full my-4 gap-4">
+          <p class="text-left">Please select a denomination.</p>
+        </div>
+      </div>
+    {/if}
     <div
       class="flex w-full items-center justify-center align-center flex-col gap-4 mb-10"
     >
-      {#each completeControllerAnalytics as controllerAnalytics, idx}
-        <p class="text-md xs:text-lg md:text-xl text-stone-300">
-          {controllerAnalytics.askDenom} → {controllerAnalytics.offerDenom}
-        </p>
-        <div
-          class="flex gap-4 items-center justify-center items-baseline flex-col lg:flex-row"
-        >
-          <DateLineChartWrapper
-            chartData={controllerAnalytics.frequency}
-            datasetLabel={`Frequency`}
-            yLabel={`Frequency`}
-            unit={"Events"}
-            digitsToRound={0}
-          />
-          <DateLineChartWrapper
-            chartData={controllerAnalytics.pnlData}
-            datasetLabel={`Profit & Loss`}
-            yLabel={`Value ${controllerAnalytics.askDenom}`}
-            unit={controllerAnalytics.askDenom}
-            shouldShowKeepFutureToggle
-          />
-          <DateLineChartWrapper
-            chartData={controllerAnalytics.reserveData}
-            datasetLabel={`Reserve Amounts`}
-            yLabel={`Value ${controllerAnalytics.offerDenom}`}
-            unit={controllerAnalytics.offerDenom}
-          />
-        </div>
-        {#if idx < completeControllerAnalytics.length - 1}
-          <div class="w-6/12 bg-stone-800 h-1 rounded" />
+      {#each completeControllerAnalytics as controllerAnalytics}
+        {#if controllerAnalytics.controller === selectedController}
+          <div
+            class="flex gap-4 items-center justify-center items-baseline flex-col lg:flex-row"
+          >
+            <DateLineChartWrapper
+              chartData={controllerAnalytics.frequency}
+              datasetLabel={`Frequency`}
+              yLabel={`Frequency`}
+              unit={"Events"}
+              digitsToRound={0}
+            />
+            <DateLineChartWrapper
+              chartData={controllerAnalytics.pnlData}
+              datasetLabel={`Profit & Loss`}
+              yLabel={`Value ${controllerAnalytics.askDenom}`}
+              unit={controllerAnalytics.askDenom}
+            />
+            <DateLineChartWrapper
+              chartData={controllerAnalytics.reserveData}
+              datasetLabel={`Reserve Amounts`}
+              yLabel={`Value ${controllerAnalytics.offerDenom}`}
+              unit={controllerAnalytics.offerDenom}
+            />
+          </div>
         {/if}
       {/each}
     </div>

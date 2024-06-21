@@ -109,6 +109,9 @@
     type: "line",
     data,
     options: {
+      ticks: {
+        maxTicksLimit: 6
+      },
       plugins: {
         tooltip: {
           callbacks: {

@@ -49,7 +49,7 @@ export function gatherUnstakeAnalyticsByController(
         const reserveAmountDenominator = Math.pow(10, askDenomInfo.dec);
 
         acc[controller].pnlData.push({
-          x: currentAnalytics.endTime,
+          x: currentAnalytics.startTime,
           y: currentAnalytics["Profit & Loss"] / pnlDenominator,
         });
 
@@ -150,6 +150,7 @@ export async function calculateIncompleteUnstakeEventPnL(
         return null;
       }
 
+      // TODO: use bignumber
       const currentVaultDebt = controlledVaultDebts[controller];
       const debtRateDelta = currentVaultDebt - vaultDebt;
 
@@ -160,15 +161,8 @@ export async function calculateIncompleteUnstakeEventPnL(
       const unbondTimeMs = 14 * 24 * 60 * 60 * 1000;
 
       const expectedDebt = debtAmountSoFar;
-
-      // TODO: debug values below
-      // console.log(reserveAmount);
-      // console.log(expectedReturn);
-      // console.log(expectedDebt);
-      // console.log(reserveAmount);
-      // console.log("---------------");
-
-      const expectedPnl = expectedReturn - expectedDebt - reserveAmount;
+      const totalDebt = expectedDebt + parseInt(splitDebtAmount[0]) * vaultDebt;
+      const expectedPnl = expectedReturn - totalDebt - reserveAmount;
 
       return {
         "Profit & Loss": expectedPnl,

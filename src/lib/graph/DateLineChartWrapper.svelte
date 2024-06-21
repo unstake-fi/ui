@@ -68,7 +68,7 @@
     }`}
   >
     {difference.toFixed(digitsToRound)} ({earliestValue !== 0
-      ? ((difference / earliestValue) * 100).toFixed(digitsToRound)
+      ? ((difference / earliestValue) * 100).toFixed(2)
       : "-"}%)
     {#if difference > 0}
       <ArrowUp class="inline" />
