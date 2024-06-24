@@ -4,6 +4,7 @@
   import { aggregateDataByDates, getRangeText } from "./utils";
   import { ArrowDown, ArrowUp } from "lucide-svelte";
   import DateLineChart from "./DateLineChart.svelte";
+  import { icon } from "$lib/resources/registry";
 
   export let chartData: DateLineChartData[];
   export let datasetLabel: string;
@@ -11,6 +12,7 @@
   export let unit: string;
   export let digitsToRound: number = 6;
   export let shouldShowKeepFutureToggle = false;
+  export let iconDenom: string | undefined = undefined;
 
   let timeRange: TimeRange = TimeRange["5D"];
   let aggregatedDates: DateLineChartData[] = [];
@@ -53,11 +55,17 @@
 >
   <p class="text-md text-stone-400">{datasetLabel}</p>
 
-  <p class="text-lg bold font-semibold">
-    {totalValue.toFixed(digitsToRound)}<span class="font-normal"
-      >{" "}{unit}</span
-    >
-  </p>
+  <div class="flex gap-1 items-center">
+    <p class="text-lg bold font-semibold">
+      {totalValue.toFixed(digitsToRound)}<span class="font-normal"
+        >{" "}{unit}
+      </span>
+    </p>
+    {#if iconDenom != null}
+      <svelte:component this={icon(iconDenom)} class="h-6 w-6" />
+    {/if}
+  </div>
+  
   <p
     class={`text-sm ${
       difference === 0

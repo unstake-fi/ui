@@ -17,6 +17,7 @@
     calculateIncompleteUnstakeEventPnL,
     gatherUnstakeAnalyticsByController,
   } from "$lib/analytics/utils";
+  import { DENOMS } from "$lib/resources/denoms";
 
   export let data: PageData = {
     unstakeAnalyticsData: [],
@@ -130,7 +131,7 @@
         >
           {#each completeControllerAnalytics as controllerAnalytics}
             <option value={controllerAnalytics.controller}
-              >{controllerAnalytics.askDenom} → {controllerAnalytics.offerDenom}</option
+              >{DENOMS[controllerAnalytics.askDenom].name} → {DENOMS[controllerAnalytics.offerDenom].name}</option
             >
           {/each}
         </select>
@@ -166,14 +167,16 @@
             <DateLineChartWrapper
               chartData={controllerAnalytics.pnlData}
               datasetLabel={`Profit & Loss`}
-              yLabel={`Value ${controllerAnalytics.askDenom}`}
-              unit={controllerAnalytics.askDenom}
+              yLabel={`Value ${DENOMS[controllerAnalytics.askDenom].name}`}
+              unit={DENOMS[controllerAnalytics.askDenom].name}
+              iconDenom={controllerAnalytics.askDenom}
             />
             <DateLineChartWrapper
               chartData={controllerAnalytics.reserveData}
               datasetLabel={`Reserve Amounts`}
-              yLabel={`Value ${controllerAnalytics.offerDenom}`}
-              unit={controllerAnalytics.offerDenom}
+              yLabel={`Value ${DENOMS[controllerAnalytics.offerDenom].name}`}
+              unit={DENOMS[controllerAnalytics.offerDenom].name}
+              iconDenom={controllerAnalytics.offerDenom}
             />
           </div>
         {/if}

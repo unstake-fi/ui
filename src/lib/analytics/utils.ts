@@ -40,8 +40,8 @@ export function gatherUnstakeAnalyticsByController(
             controller,
             pnlData: [],
             reserveData: [],
-            offerDenom: offerDenomInfo.name,
-            askDenom: askDenomInfo.name,
+            offerDenom: nonNullOfferDenom,
+            askDenom: nonNullAskDenom,
             frequency: [],
           };
         }
