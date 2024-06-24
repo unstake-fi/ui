@@ -37,7 +37,7 @@
 
       const unstakeEventAnalytics = gatherUnstakeAnalyticsByController([
         ...data.unstakeAnalyticsData,
-        // ...incompleteUnstakeEventAnalyticsData,
+        ...incompleteUnstakeEventAnalyticsData,
       ]);
 
       if (unstakeEventAnalytics.length > 0) {

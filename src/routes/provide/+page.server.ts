@@ -17,8 +17,8 @@ export const load: PageServerLoad = async () => {
       `,
       []
     );
-
-
+    
+    
     // Query necessary data to calculate analytics for Unstake events that haven't ended
     const startedEventAnalytics = await postgresQuery(
       `

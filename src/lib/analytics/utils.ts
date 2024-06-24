@@ -9,6 +9,7 @@ import { DENOMS } from "$lib/resources/denoms";
 import { savedNetwork } from "$lib/network/stores";
 import type { KujiraClient } from "$lib/network/types";
 import type { Refreshing } from "$lib/refreshing";
+import { BigNumber } from "bignumber.js";
 
 // Generates PnL and Reserve Amount statistics for each controller that belongs to the current chainId
 export function gatherUnstakeAnalyticsByController(
@@ -143,29 +144,38 @@ export async function calculateIncompleteUnstakeEventPnL(
       unbondAmount,
       vaultDebt,
     }) => {
-      const expectedReturn = providerRedemption * unbondAmount;
+      const expectedReturn = BigNumber(providerRedemption).multipliedBy(
+        BigNumber(unbondAmount)
+      );
 
       // Make sure controller has a vault debt
       if (controlledVaultDebts[controller] == null) {
         return null;
       }
 
-      // TODO: use bignumber
       const currentVaultDebt = controlledVaultDebts[controller];
-      const debtRateDelta = currentVaultDebt - vaultDebt;
+      const debtRateDelta = BigNumber(currentVaultDebt).minus(
+        BigNumber(vaultDebt)
+      );
 
       const splitDebtAmount = debtAmount.split("factory");
-      const debtAmountSoFar = debtRateDelta * parseInt(splitDebtAmount[0]);
+      const debtAmountNum = BigNumber(parseInt(splitDebtAmount[0]));
+      const debtDuringUnstake =
+        BigNumber(debtRateDelta).multipliedBy(debtAmountNum);
+      const debtBeforeUnstake = debtAmountNum.multipliedBy(
+        BigNumber(vaultDebt)
+      );
 
       // TODO: replace with more accurate unbonding time
       const unbondTimeMs = 14 * 24 * 60 * 60 * 1000;
 
-      const expectedDebt = debtAmountSoFar;
-      const totalDebt = expectedDebt + parseInt(splitDebtAmount[0]) * vaultDebt;
-      const expectedPnl = expectedReturn - totalDebt - reserveAmount;
+      const totalDebt = debtDuringUnstake.plus(debtBeforeUnstake);
+      const expectedPnl = expectedReturn
+        .minus(totalDebt)
+        .minus(BigNumber(reserveAmount));
 
       return {
-        "Profit & Loss": expectedPnl,
+        "Profit & Loss": expectedPnl.toNumber(),
         "Reserve Amount": reserveAmount,
         startTime: startTime,
         endTime: new Date(startTime.getTime() + unbondTimeMs),
