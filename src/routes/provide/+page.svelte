@@ -167,13 +167,13 @@
             <DateLineChartWrapper
               chartData={controllerAnalytics.pnlData}
               datasetLabel={`Profit & Loss`}
-              yLabel={`Value ${DENOMS[controllerAnalytics.askDenom].name}`}
-              unit={DENOMS[controllerAnalytics.askDenom].name}
-              iconDenom={controllerAnalytics.askDenom}
+              yLabel={`Value ${DENOMS[controllerAnalytics.offerDenom].name}`}
+              unit={DENOMS[controllerAnalytics.offerDenom].name}
+              iconDenom={controllerAnalytics.offerDenom}
             />
             <DateLineChartWrapper
               chartData={controllerAnalytics.reserveData}
-              datasetLabel={`Reserve Amounts`}
+              datasetLabel={`Used Reserves`}
               yLabel={`Value ${DENOMS[controllerAnalytics.offerDenom].name}`}
               unit={DENOMS[controllerAnalytics.offerDenom].name}
               iconDenom={controllerAnalytics.offerDenom}

@@ -118,11 +118,15 @@ async function getControlledVaultDebts(
   return controlledVaultDebts;
 }
 
+const DAYS_14_MS = 14 * 24 * 60 * 60 * 1000;
+
 // Calculates PnL for unstake events with controllers belonging to the client's chain id
 export async function calculateIncompleteUnstakeEventPnL(
   incompleteUnstakeAnalytics: IncompleteUnstakeAnalytics[],
   client: Refreshing<KujiraClient>
 ): Promise<UnstakeAnalytics[]> {
+  const { chainId } = get(savedNetwork);
+
   const uniqueControllers = uniqueList(
     incompleteUnstakeAnalytics.map((value) => value.controller)
   );
@@ -166,8 +170,8 @@ export async function calculateIncompleteUnstakeEventPnL(
         BigNumber(vaultDebt)
       );
 
-      // TODO: replace with more accurate unbonding time
-      const unbondTimeMs = 14 * 24 * 60 * 60 * 1000;
+      const unbondTimeMs =
+        CONTROLLERS[chainId][controller]?.broker.duration || DAYS_14_MS;
 
       const totalDebt = debtDuringUnstake.plus(debtBeforeUnstake);
       const expectedPnl = expectedReturn
