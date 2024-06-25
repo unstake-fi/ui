@@ -38,7 +38,7 @@
 
       const unstakeEventAnalytics = gatherUnstakeAnalyticsByController([
         ...data.unstakeAnalyticsData,
-        // ...incompleteUnstakeEventAnalyticsData,
+        ...incompleteUnstakeEventAnalyticsData,
       ]);
 
       if (unstakeEventAnalytics.length > 0) {
@@ -131,7 +131,9 @@
         >
           {#each completeControllerAnalytics as controllerAnalytics}
             <option value={controllerAnalytics.controller}
-              >{DENOMS[controllerAnalytics.askDenom].name} → {DENOMS[controllerAnalytics.offerDenom].name}</option
+              >{DENOMS[controllerAnalytics.askDenom].name} → {DENOMS[
+                controllerAnalytics.offerDenom
+              ].name}</option
             >
           {/each}
         </select>

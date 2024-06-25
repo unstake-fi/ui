@@ -144,55 +144,7 @@ function calculateExpectedAnalytics({
   const debtRateDelta = BigNumber(currentVaultDebt).minus(BigNumber(vaultDebt));
 
   const splitDebtAmount = debtAmount.split("factory");
-  const debtAmountNum = BigNumber(parseInt(splitDebtAmount[0]));
-  const debtDuringUnstake =
-    BigNumber(debtRateDelta).multipliedBy(debtAmountNum);
-  const debtBeforeUnstake = debtAmountNum.multipliedBy(BigNumber(vaultDebt));
-
-  const unbondTimeMs =
-    CONTROLLERS[chainId][controller]?.broker.duration || DAYS_14_MS;
-
-  const totalDebt = debtDuringUnstake.plus(debtBeforeUnstake);
-  const expectedPnl = expectedReturn
-    .minus(totalDebt)
-    .minus(BigNumber(reserveAmount));
-
-  return {
-    pnl: expectedPnl.toNumber(),
-    startTime: startTime,
-    endTime: new Date(startTime.getTime() + unbondTimeMs),
-    controller,
-  };
-}
-
-function calculateV1Analytics({
-  controller,
-  debtAmount,
-  providerRedemption,
-  reserveAmount,
-  startTime,
-  unbondAmount,
-  vaultDebt,
-  controllerVaultDebts,
-}: IncompleteUnstakeAnalytics & {
-  controllerVaultDebts: ControllerVaultDebts;
-}): UnstakeAnalytics | null {
-  const { chainId } = get(savedNetwork);
-
-  const expectedReturn = BigNumber(providerRedemption).multipliedBy(
-    BigNumber(unbondAmount)
-  );
-
-  // Make sure controller has a vault debt
-  if (controllerVaultDebts[controller] == null) {
-    return null;
-  }
-
-  const currentVaultDebt = controllerVaultDebts[controller];
-  const debtRateDelta = BigNumber(currentVaultDebt).minus(BigNumber(vaultDebt));
-
-  const splitDebtAmount = debtAmount.split("factory");
-  const debtAmountNum = BigNumber(parseInt(splitDebtAmount[0]));
+  const debtAmountNum = BigNumber(splitDebtAmount[0]);
   const debtDuringUnstake =
     BigNumber(debtRateDelta).multipliedBy(debtAmountNum);
   const debtBeforeUnstake = debtAmountNum.multipliedBy(BigNumber(vaultDebt));

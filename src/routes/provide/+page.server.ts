@@ -10,9 +10,7 @@ export const load: PageServerLoad = async () => {
     // Query necessary data to calculate analytics for completed Unstake events
     const completedV0EventAnalytics = await postgresQuery(
       `
-      SELECT 
-      (("returnAmount" - "repayAmount" - LEAST("returnAmount" - "repayAmount", "reserveAmount")) 
-      + (LEAST("returnAmount" - "repayAmount", "reserveAmount") - "reserveAmount"))/2.0 as pnl, 
+      SELECT ("returnAmount" - "repayAmount" - "reserveAmount")/2 as pnl, 
       "endTime", "controller", "startTime"
       FROM unstake 
       WHERE (NOT "startBlockHeight"=0) AND (NOT "endBlockHeight"=0) AND (NOT "controller"='')  AND "endTime" <= '2024-06-10T19:52:36Z'
