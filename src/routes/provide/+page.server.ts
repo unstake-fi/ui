@@ -8,11 +8,24 @@ import type {
 export const load: PageServerLoad = async () => {
   try {
     // Query necessary data to calculate analytics for completed Unstake events
-    const completedEventAnalytics = await postgresQuery(
+    const completedV0EventAnalytics = await postgresQuery(
       `
-      SELECT "reserveAmount", ("returnAmount" - "repayAmount" - "reserveAmount") as pnl, "endTime", "controller", "startTime"
+      SELECT 
+      (("returnAmount" - "repayAmount" - LEAST("returnAmount" - "repayAmount", "reserveAmount")) 
+      + (LEAST("returnAmount" - "repayAmount", "reserveAmount") - "reserveAmount"))/2.0 as pnl, 
+      "endTime", "controller", "startTime"
       FROM unstake 
-      WHERE (NOT "startBlockHeight"=0) AND (NOT "endBlockHeight"=0) AND (NOT "controller"='')
+      WHERE (NOT "startBlockHeight"=0) AND (NOT "endBlockHeight"=0) AND (NOT "controller"='')  AND "endTime" <= '2024-06-10T19:52:36Z'
+      ORDER BY "startTime"
+      `,
+      []
+    );
+
+    const completedV1EventAnalytics = await postgresQuery(
+      `
+      SELECT ("returnAmount" - "repayAmount" - "reserveAmount") as pnl, "endTime", "controller", "startTime"
+      FROM unstake 
+      WHERE (NOT "startBlockHeight"=0) AND (NOT "endBlockHeight"=0) AND (NOT "controller"='') AND "endTime" > '2024-06-10T19:52:36Z'
       ORDER BY "startTime"
       `,
       []
@@ -40,10 +53,11 @@ export const load: PageServerLoad = async () => {
         vaultDebt: row.vaultDebt,
       }));
 
-    const rows = completedEventAnalytics.rows;
-    const unstakeAnalyticsData: UnstakeAnalytics[] = rows.map((row) => ({
-      "Profit & Loss": row.pnl,
-      "Reserve Amount": row.reserveAmount,
+    const unstakeAnalyticsData: UnstakeAnalytics[] = [
+      ...completedV0EventAnalytics.rows,
+      ...completedV1EventAnalytics.rows,
+    ].map((row) => ({
+      pnl: row.pnl,
       startTime: row.startTime,
       endTime: row.endTime,
       controller: row.controller,

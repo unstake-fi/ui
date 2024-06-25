@@ -38,7 +38,7 @@
 
       const unstakeEventAnalytics = gatherUnstakeAnalyticsByController([
         ...data.unstakeAnalyticsData,
-        ...incompleteUnstakeEventAnalyticsData,
+        // ...incompleteUnstakeEventAnalyticsData,
       ]);
 
       if (unstakeEventAnalytics.length > 0) {
@@ -167,13 +167,6 @@
             <DateLineChartWrapper
               chartData={controllerAnalytics.pnlData}
               datasetLabel={`Profit & Loss`}
-              yLabel={`Value ${DENOMS[controllerAnalytics.offerDenom].name}`}
-              unit={DENOMS[controllerAnalytics.offerDenom].name}
-              iconDenom={controllerAnalytics.offerDenom}
-            />
-            <DateLineChartWrapper
-              chartData={controllerAnalytics.reserveData}
-              datasetLabel={`Used Reserves`}
               yLabel={`Value ${DENOMS[controllerAnalytics.offerDenom].name}`}
               unit={DENOMS[controllerAnalytics.offerDenom].name}
               iconDenom={controllerAnalytics.offerDenom}

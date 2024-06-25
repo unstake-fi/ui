@@ -11,8 +11,7 @@ export type IncompleteUnstakeAnalytics = {
 };
 
 export type UnstakeAnalytics = {
-  "Profit & Loss": number;
-  "Reserve Amount": number;
+  pnl: number;
   startTime: Date;
   endTime: Date;
   controller: string;
@@ -21,7 +20,6 @@ export type UnstakeAnalytics = {
 export type ControllerAnalytics = {
   controller: string;
   pnlData: DateLineChartData[];
-  reserveData: DateLineChartData[];
   frequency: DateLineChartData[];
   offerDenom: string;
   askDenom: string;
