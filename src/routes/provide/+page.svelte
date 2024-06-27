@@ -165,6 +165,7 @@
               yLabel={`Frequency`}
               unit={"Events"}
               digitsToRound={0}
+              footerComment={"An event is recorded when unbonding begins"}
             />
             <DateLineChartWrapper
               chartData={controllerAnalytics.pnlData}
@@ -172,6 +173,8 @@
               yLabel={`Value ${DENOMS[controllerAnalytics.offerDenom].name}`}
               unit={DENOMS[controllerAnalytics.offerDenom].name}
               iconDenom={controllerAnalytics.offerDenom}
+              shouldShowKeepFutureToggle
+              footerComment={"PnL is recorded when unbonding ends"}
             />
           </div>
         {/if}

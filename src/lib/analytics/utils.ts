@@ -11,7 +11,7 @@ import type { KujiraClient } from "$lib/network/types";
 import type { Refreshing } from "$lib/refreshing";
 import { BigNumber } from "bignumber.js";
 
-const DAYS_14_MS = 14 * 24 * 60 * 60 * 1000;
+const DAYS_14_SEC = 14 * 24 * 60 * 60;
 
 // Generates PnL and Reserve Amount statistics for each controller that belongs to the current chainId
 export function gatherUnstakeAnalyticsByController(
@@ -49,7 +49,7 @@ export function gatherUnstakeAnalyticsByController(
         const pnlDenominator = Math.pow(10, offerDenomInfo.dec);
 
         acc[controller].pnlData.push({
-          x: currentAnalytics.startTime,
+          x: currentAnalytics.endTime,
           y: currentAnalytics.pnl / pnlDenominator,
         });
 
@@ -130,7 +130,6 @@ function calculateExpectedAnalytics({
   controllerVaultDebts: ControllerVaultDebts;
 }): UnstakeAnalytics | null {
   const { chainId } = get(savedNetwork);
-
   const expectedReturn = BigNumber(providerRedemption).multipliedBy(
     BigNumber(unbondAmount)
   );
@@ -150,7 +149,7 @@ function calculateExpectedAnalytics({
   const debtBeforeUnstake = debtAmountNum.multipliedBy(BigNumber(vaultDebt));
 
   const unbondTimeMs =
-    CONTROLLERS[chainId][controller]?.broker.duration || DAYS_14_MS;
+    (CONTROLLERS[chainId][controller]?.broker.duration || DAYS_14_SEC) * 1000;
 
   const totalDebt = debtDuringUnstake.plus(debtBeforeUnstake);
   const expectedPnl = expectedReturn

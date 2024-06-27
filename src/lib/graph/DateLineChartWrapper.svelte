@@ -1,7 +1,7 @@
 <script lang="ts">
   import "chartjs-adapter-moment";
   import { type DateLineChartData, TimeRange } from "./types";
-  import { aggregateDataByDates, getRangeText } from "./utils";
+  import { aggregateDataByDates, getNearestDate, getRangeText } from "./utils";
   import { ArrowDown, ArrowUp } from "lucide-svelte";
   import DateLineChart from "./DateLineChart.svelte";
   import { icon } from "$lib/resources/registry";
@@ -13,6 +13,8 @@
   export let digitsToRound: number = 6;
   export let shouldShowKeepFutureToggle = false;
   export let iconDenom: string | undefined = undefined;
+  export let footerComment = "";
+  export let verticalLineIdx = 0;
 
   let timeRange: TimeRange = TimeRange["5D"];
   let aggregatedDates: DateLineChartData[] = [];
@@ -20,6 +22,7 @@
   let earliestValue = 0;
   let totalValue = 0;
   let difference = 0;
+  let timeDifference = 0;
   let shouldKeepFuture = false;
 
   function updateGraph() {
@@ -28,7 +31,18 @@
       timeRange,
       shouldKeepFuture,
     });
-    // TODO: test out shouldKeepFuture
+    timeDifference =
+      aggregatedDates[aggregatedDates.length - 1].x.getTime() -
+      aggregatedDates[0].x.getTime();
+
+    const currentNearestDate = getNearestDate(new Date(), timeRange);
+    verticalLineIdx = aggregatedDates
+      .map((date, idx) => ({
+        x: Math.abs(currentNearestDate.getTime() - date.x.getTime()),
+        idx,
+      }))
+      .toSorted((a, b) => a.x - b.x)[0].idx;
+
     earliestValue = aggregatedDates[0].y;
     let latestValue = aggregatedDates[aggregatedDates.length - 1].y;
     totalValue = aggregatedDates.reduce((acc, curr) => acc + curr.y, 0);
@@ -65,7 +79,7 @@
       <svelte:component this={icon(iconDenom)} class="h-6 w-6" />
     {/if}
   </div>
-  
+
   <p
     class={`text-sm ${
       difference === 0
@@ -82,7 +96,7 @@
       <ArrowUp class="inline" />
     {:else if difference < 0}
       <ArrowDown class="inline" />{/if}
-    {" "}{getRangeText(timeRange)}
+    {" "}{getRangeText(timeRange, timeDifference)}
   </p>
   <div class="flex">
     <button
@@ -118,7 +132,7 @@
     {unit}
     {graphColor}
     {timeRange}
-    verticalLineIdx={aggregatedDates.length - 1}
+    {verticalLineIdx}
   />
   {#if shouldShowKeepFutureToggle}
     <label class="inline-flex items-center cursor-pointer justify-center">
@@ -132,8 +146,13 @@
         class="relative w-11 h-6 bg-stone-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
       ></div>
       <span class="ms-3 text-sm font-medium text-stone-400"
-        >Show Predicted Future</span
+        >Show Future {datasetLabel}</span
       >
     </label>
+  {/if}
+  {#if footerComment !== ""}
+    <span class="mt-2 text-sm italic text-stone-400 text-center"
+      >{footerComment}</span
+    >
   {/if}
 </div>

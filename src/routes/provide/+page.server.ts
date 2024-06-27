@@ -8,22 +8,11 @@ import type {
 export const load: PageServerLoad = async () => {
   try {
     // Query necessary data to calculate analytics for completed Unstake events
-    const completedV0EventAnalytics = await postgresQuery(
+    const completedEventAnalytics = await postgresQuery(
       `
-      SELECT ("returnAmount" - "repayAmount" - "reserveAmount")/2 as pnl, 
-      "endTime", "controller", "startTime"
+      SELECT "endTime", "controller", "startTime", "protocolFee"
       FROM unstake 
-      WHERE (NOT "startBlockHeight"=0) AND (NOT "endBlockHeight"=0) AND (NOT "controller"='')  AND "endTime" <= '2024-06-10T19:52:36Z'
-      ORDER BY "startTime"
-      `,
-      []
-    );
-
-    const completedV1EventAnalytics = await postgresQuery(
-      `
-      SELECT ("returnAmount" - "repayAmount" - "reserveAmount") as pnl, "endTime", "controller", "startTime"
-      FROM unstake 
-      WHERE (NOT "startBlockHeight"=0) AND (NOT "endBlockHeight"=0) AND (NOT "controller"='') AND "endTime" > '2024-06-10T19:52:36Z'
+      WHERE (NOT "startBlockHeight"=0) AND (NOT "endBlockHeight"=0) AND (NOT "controller"='')
       ORDER BY "startTime"
       `,
       []
@@ -51,11 +40,8 @@ export const load: PageServerLoad = async () => {
         vaultDebt: row.vaultDebt,
       }));
 
-    const unstakeAnalyticsData: UnstakeAnalytics[] = [
-      ...completedV0EventAnalytics.rows,
-      ...completedV1EventAnalytics.rows,
-    ].map((row) => ({
-      pnl: row.pnl,
+    const unstakeAnalyticsData: UnstakeAnalytics[] = completedEventAnalytics.rows.map((row) => ({
+      pnl: row.protocolFee,
       startTime: row.startTime,
       endTime: row.endTime,
       controller: row.controller,

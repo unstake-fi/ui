@@ -105,18 +105,30 @@ export function getTooltipFormat(timeRange: TimeRange) {
   }
 }
 
-export function getRangeText(timeRange: TimeRange) {
+export function getRangeText(timeRange: TimeRange, timeDifference: number) {
   switch (timeRange) {
     case TimeRange["1D"]:
-      return "past day";
     case TimeRange["5D"]:
-      return "past 5 days";
+      const numDays = Math.floor(timeDifference / 1000 / 60 / 60 / 24);
+      if (numDays <= 1) {
+        return "past day";
+      } else {
+        return `past ${numDays} days`;
+      }
     case TimeRange["2W"]:
-      return "past 2 weeks";
+      const numWeeks = Math.floor(timeDifference / 1000 / 60 / 60 / 24 / 7);
+      return `past ${numWeeks} weeks`;
     case TimeRange["6M"]:
-      return "past 6 months";
+      const numMonths = Math.floor(timeDifference / 1000 / 60 / 60 / 24 / 30);
+      return `past ${numMonths} months`;
     case TimeRange["1Y"]:
-      return "past year";
+      const numMonthYears = Math.floor(
+        timeDifference / 1000 / 60 / 60 / 24 / 30
+      );
+      if (numMonthYears === 12) {
+        return "past year";
+      }
+      return `past ${numMonthYears} months`;
     case TimeRange.MAX:
       return "all time";
   }
