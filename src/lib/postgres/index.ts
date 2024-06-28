@@ -1,6 +1,7 @@
-import pkg from "pg";
-import { DATABASE_URL } from "$env/static/private";
+import { env } from '$env/dynamic/private';
+const { DATABASE_URL } = env;
 
+import pkg from "pg";
 const { Pool } = pkg;
 
 const url = new URL(DATABASE_URL);

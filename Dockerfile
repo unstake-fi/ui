@@ -12,7 +12,6 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
-
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
@@ -38,10 +37,12 @@ RUN rm -rf node_modules && \
 FROM base
 
 # Copy built application
-COPY --from=build /app/build /app/build
-COPY --from=build /app/node_modules /app/node_modules
-COPY --from=build /app/package.json /app
+# COPY --from=build /app/dist /app/build
+# COPY --from=build /app/node_modules /app/node_modules
+# COPY --from=build /app/package.json /app
+# COPY --from=build /app /app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "bun", "run", "start" ]
+# CMD [ "bun", "run", "start" ]
+CMD ["ls"]
