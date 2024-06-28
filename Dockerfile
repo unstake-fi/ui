@@ -4,6 +4,8 @@
 ARG BUN_VERSION=1.1.9
 FROM oven/bun:${BUN_VERSION}-slim as base
 
+# ARG DATABASE_URL
+
 LABEL fly_launch_runtime="SvelteKit"
 
 # SvelteKit app lives here
@@ -37,12 +39,10 @@ RUN rm -rf node_modules && \
 FROM base
 
 # Copy built application
-# COPY --from=build /app/dist /app/build
-# COPY --from=build /app/node_modules /app/node_modules
-# COPY --from=build /app/package.json /app
-# COPY --from=build /app /app
+COPY --from=build /app/build /app/build
+COPY --from=build /app/node_modules /app/node_modules
+COPY --from=build /app/package.json /app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-# CMD [ "bun", "run", "start" ]
-CMD ["ls"]
+CMD [ "bun", "run", "start" ]
