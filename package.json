@@ -41,6 +41,8 @@
     "@keplr-wallet/types": "^0.12.88",
     "@leapwallet/cosmos-snap-provider": "^0.1.26",
     "@sveltejs/adapter-auto": "^3.2.2",
+    "@sveltejs/adapter-cloudflare": "^4.5.0",
+    "@sveltejs/adapter-node": "^5.2.0",
     "@terra-money/station-connector": "^1.1.4",
     "@walletconnect/sign-client": "^2.13.0",
     "cosmjs-types": "^0.9.0",
