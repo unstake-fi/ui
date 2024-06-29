@@ -1,4 +1,5 @@
-import { DATABASE_URL } from "$env/static/private";
+import { env } from "$env/dynamic/private";
+const { DATABASE_URL } = env;
 import type { PageServerLoad } from "./$types";
 import pkg from "pg";
 
@@ -27,6 +28,9 @@ const createPool = (databaseUrl: string) => {
 
   return pool;
 };
+
+export const prerender = false;
+export const ssr = true;
 
 export const load: PageServerLoad = async () => {
   const pool = createPool(DATABASE_URL);
