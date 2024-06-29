@@ -19,38 +19,38 @@
   } from "$lib/analytics/utils";
   import { DENOMS } from "$lib/resources/denoms";
 
-  // export let data: PageData = {
-  //   unstakeAnalyticsData: [],
-  //   incompleteUnstakeAnalytics: [],
-  // };
+  export let data: PageData = {
+    unstakeAnalyticsData: [],
+    incompleteUnstakeAnalytics: [],
+  };
 
   let selectedController = "";
 
   $: allReserves = Object.values(RESERVES[$savedNetwork.chainId]);
 
-  // const allControllerAnalytics = refreshing(
-  //   async () => {
-  //     const incompleteUnstakeEventAnalyticsData =
-  //       await calculateIncompleteUnstakeEventPnL(
-  //         data.incompleteUnstakeAnalytics,
-  //         client
-  //       );
+  const allControllerAnalytics = refreshing(
+    async () => {
+      const incompleteUnstakeEventAnalyticsData =
+        await calculateIncompleteUnstakeEventPnL(
+          data.incompleteUnstakeAnalytics,
+          client
+        );
 
-  //     const unstakeEventAnalytics = gatherUnstakeAnalyticsByController([
-  //       ...data.unstakeAnalyticsData,
-  //       ...incompleteUnstakeEventAnalyticsData,
-  //     ]);
+      const unstakeEventAnalytics = gatherUnstakeAnalyticsByController([
+        ...data.unstakeAnalyticsData,
+        ...incompleteUnstakeEventAnalyticsData,
+      ]);
 
-  //     if (unstakeEventAnalytics.length > 0) {
-  //       selectedController = unstakeEventAnalytics[0].controller;
-  //     }
+      if (unstakeEventAnalytics.length > 0) {
+        selectedController = unstakeEventAnalytics[0].controller;
+      }
 
-  //     return unstakeEventAnalytics;
-  //   },
-  //   {
-  //     refreshOn: [client],
-  //   }
-  // );
+      return unstakeEventAnalytics;
+    },
+    {
+      refreshOn: [client],
+    }
+  );
 
   const reserveStatuses = refreshing(
     async () => {
@@ -118,7 +118,7 @@
   </div>
 </div>
 
-<!-- <div class="max-w-prose mx-auto">
+<div class="max-w-prose mx-auto">
   <div class="flex flex-row justify-between w-full my-4 gap-7">
     <h1 class="text-2xl xs:text-3xl md:text-4xl">Analytics</h1>
     {#await $allControllerAnalytics then completeControllerAnalytics}
@@ -140,8 +140,8 @@
       {/if}
     {/await}
   </div>
-</div> -->
-<!-- 
+</div>
+
 {#await $allControllerAnalytics then completeControllerAnalytics}
   {#if completeControllerAnalytics.length > 0}
     {#if selectedController === ""}
@@ -161,11 +161,10 @@
           >
             <DateLineChartWrapper
               chartData={controllerAnalytics.frequency}
-              datasetLabel={`Frequency`}
+              datasetLabel={`Unstake Frequency`}
               yLabel={`Frequency`}
-              unit={"Events"}
+              unit={"Unstakings"}
               digitsToRound={0}
-              footerComment={"An event is recorded when unbonding begins"}
             />
             <DateLineChartWrapper
               chartData={controllerAnalytics.pnlData}
@@ -174,7 +173,6 @@
               unit={DENOMS[controllerAnalytics.offerDenom].name}
               iconDenom={controllerAnalytics.offerDenom}
               shouldShowKeepFutureToggle
-              footerComment={"PnL is recorded when unbonding ends"}
             />
           </div>
         {/if}
@@ -187,4 +185,4 @@
       </div>
     </div>
   {/if}
-{/await} -->
+{/await}

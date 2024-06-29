@@ -4,7 +4,8 @@
 ARG BUN_VERSION=1.1.9
 FROM oven/bun:${BUN_VERSION}-slim as base
 
-# ARG DATABASE_URL
+ARG DATABASE_URL
+ENV DATABASE_URL $DATABASE_URL
 
 LABEL fly_launch_runtime="SvelteKit"
 
@@ -29,7 +30,7 @@ RUN bun install
 COPY --link . .
 
 # Build application
-RUN bun --bun run build
+RUN DATABASE_URL=$DATABASE_URL bun --bun run build
 
 # Remove development dependencies
 RUN rm -rf node_modules && \
