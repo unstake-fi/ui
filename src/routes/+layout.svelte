@@ -35,6 +35,7 @@
   <div class="flex max-w-prose justify-between mx-auto p-4">
     <img src="/unstake-name.svg" class="h-12 xs:h-14" alt="Unstake.fi Logo" />
     <nav class="flex gap-1 xs:gap-3 items-center text-sm xs:text-base">
+      <a href="/analytics" class:active={path === "/analytics"}>Analytics</a>
       <a href="/provide" class:active={path === "/provide"}>Provide</a>
       <a href="/" class:active={path === "/"}>Unstake</a>
     </nav>
