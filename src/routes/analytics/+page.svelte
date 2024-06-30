@@ -35,13 +35,13 @@
   </div>
   <div class="flex flex-row gap-4">
     <div
-      class="basis-1/2 rounded-lg border border-stone-500 max-h-72 overflow-y-scroll p-2"
+      class="basis-1/2 rounded-lg bg-stone-800 max-h-72 overflow-y-scroll p-2"
     >
       <table class="w-full">
         <thead>
           <tr class="text-xs text-stone-500">
             <th class="text-left pt-2 pb-4"></th>
-            <th class="text-left pt-2 pb-4">Time</th>
+            <th class="text-left pt-2 pb-4">Completion</th>
             <th class="text-left pt-2 pb-4">Unbond Amount</th>
             <th class="text-right pt-2 pb-4">NSTK PnL</th>
           </tr>
@@ -86,13 +86,13 @@
       </table>
     </div>
     <div
-      class="basis-1/2 rounded-lg border border-stone-500 max-h-72 overflow-y-scroll p-2"
+      class="basis-1/2 rounded-lg bg-stone-800 max-h-72 overflow-y-scroll p-2"
     >
       <table class="w-full">
         <thead>
           <tr class="text-xs text-stone-500">
             <th class="text-left pt-2 pb-4"></th>
-            <th class="text-left pt-2 pb-4">Time</th>
+            <th class="text-left pt-2 pb-4">Started</th>
             <th class="text-left pt-2 pb-4">Unbond Amount</th>
             <th class="text-right pt-2 pb-4">Forecasted PnL</th>
           </tr>
