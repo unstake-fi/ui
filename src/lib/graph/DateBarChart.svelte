@@ -40,6 +40,10 @@
       color: string,
       nPoints: number
     ) {
+      // don't render if now is the last point
+      if (pointIndex === nPoints - 1) {
+        return;
+      }
       const lineLeftOffset = this.getLinePosition(chartInstance, pointIndex);
       const area = chartInstance.chartArea;
       const context = chartInstance.ctx;
@@ -72,7 +76,7 @@
     data,
     options: {
       ticks: {
-        maxTicksLimit: 6,
+        maxTicksLimit: 0,
       },
       plugins: {
         tooltip: {

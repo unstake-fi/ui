@@ -54,9 +54,8 @@ export const load: PageServerLoad = async ({ locals }) => {
         FROM unstake
         WHERE (NOT "startBlockHeight"=0) AND ("endBlockHeight"=0)
         ORDER BY "startTime" DESC
-        LIMIT $1
         `,
-        ["100"]
+        []
       ),
       // Query vault debts
       vaultDebtRatios,
