@@ -2,19 +2,16 @@
   import type { PageData } from "./$types";
   import { DENOMS } from "$lib/resources/denoms";
   import { icon } from "$lib/resources/registry";
-  import { formatBigNumber, getRelativeTime } from "$lib/wallet/utils";
-  import BigNumber from "bignumber.js";
+  import { getRelativeTime } from "$lib/wallet/utils";
   import { Balance } from "$lib/wallet/coin";
-  import { calculateIncompleteUnstakeEventPnL } from "$lib/analytics/utils";
+  import { groupBy } from "$lib/analytics/utils";
+  import { BigNumber } from "bignumber.js";
+  import DateLineChartWrapper from "$lib/graph/DateLineChartWrapper.svelte";
 
   export let data: PageData;
-  const { unstakeAnalyticsData, incompleteUnstakeAnalytics, vaultDebts } = data;
-  const expectedUnstakeAnalytics = calculateIncompleteUnstakeEventPnL(
-    incompleteUnstakeAnalytics,
-    vaultDebts
-  );
-
-  let selectedController = "";
+  const { unstakeAnalyticsData, incompleteUnstakeAnalytics } = data;
+  const allData = [...unstakeAnalyticsData, ...incompleteUnstakeAnalytics];
+  const dataByAsset = groupBy(allData, (d) => d.controller.offer_denom);
 </script>
 
 <div class="max-w-screen-lg mx-auto">
@@ -86,7 +83,7 @@
           </tr>
         </thead>
         <tbody>
-          {#each expectedUnstakeAnalytics as unstake}
+          {#each incompleteUnstakeAnalytics as unstake}
             {@const unbondAmount = Balance.fromAmountDenom(
               unstake.unbondAmount,
               unstake.controller.ask_denom
@@ -124,5 +121,40 @@
         </tbody>
       </table>
     </div>
+  </div>
+  <div
+    class="flex flex-col w-full items-center justify-center align-center gap-4 mb-10"
+  >
+    {#each dataByAsset.entries() as [asset, controllerAnalytics]}
+      <div class="flex gap-4 w-full">
+        <DateLineChartWrapper
+          class="basis-1/2"
+          data={controllerAnalytics}
+          dataMap={(d) => ({
+            x: d.startTime,
+            y: 1,
+          })}
+          datasetLabel={`Unstake Frequency`}
+          yLabel={`Frequency`}
+          unit={"Unstakings"}
+          digitsToRound={0}
+        />
+        <DateLineChartWrapper
+          class="basis-1/2"
+          data={controllerAnalytics}
+          dataMap={(d) => ({
+            x: d.endTime,
+            y: new BigNumber(d.pnl)
+              .dividedBy(Math.pow(10, DENOMS[asset].dec))
+              .toNumber(),
+          })}
+          datasetLabel={`Profit & Loss`}
+          yLabel={`Value ${DENOMS[controllerAnalytics[0].controller.offer_denom].name}`}
+          unit={DENOMS[controllerAnalytics[0].controller.offer_denom].name}
+          iconDenom={controllerAnalytics[0].controller.offer_denom}
+          shouldShowKeepFutureToggle
+        />
+      </div>
+    {/each}
   </div>
 </div>

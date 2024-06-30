@@ -1,12 +1,25 @@
-<script lang="ts">
+<script lang="ts" generics="T">
   import "chartjs-adapter-moment";
-  import { type DateLineChartData, TimeRange } from "./types";
+  import { type DataPoint, TimeRange } from "./types";
   import { aggregateDataByDates, getNearestDate, getRangeText } from "./utils";
   import { ArrowDown, ArrowUp } from "lucide-svelte";
   import DateLineChart from "./DateLineChart.svelte";
   import { icon } from "$lib/resources/registry";
+  import DateBarChart from "./DateBarChart.svelte";
 
-  export let chartData: DateLineChartData[];
+  let clazz: string = "";
+  export { clazz as class };
+
+  export let data: T[] = [];
+  export let dataMap: (data: T) => DataPoint;
+  let chartData = data.map(dataMap);
+  $: chartData = data.map(dataMap);
+
+  // export let labels: {
+  //   dataset?: string;
+  //   x?: string;
+  //   y?: string;
+  // };
   export let datasetLabel: string;
   export let yLabel: string;
   export let unit: string;
@@ -17,13 +30,17 @@
   export let verticalLineIdx = 0;
 
   let timeRange: TimeRange = TimeRange["5D"];
-  let aggregatedDates: DateLineChartData[] = [];
+  let aggregatedDates: DataPoint[] = [];
   let graphColor = "gray";
   let earliestValue = 0;
   let totalValue = 0;
   let difference = 0;
   let timeDifference = 0;
   let shouldKeepFuture = false;
+  $: {
+    shouldKeepFuture;
+    updateGraph();
+  }
 
   function updateGraph() {
     aggregatedDates = aggregateDataByDates({
@@ -56,24 +73,18 @@
     updateGraph();
   }
 
-  function toggleShouldKeepFuture() {
-    shouldKeepFuture = !shouldKeepFuture;
-    updateGraph();
-  }
-
   updateGraph();
 </script>
 
-<div
-  class="flex flex-1 bg-stone-800 rounded-lg py-2 px-2.5 flex-col justify-start"
->
+<div class={`${clazz} bg-stone-800 rounded-lg py-2 px-2.5`}>
+  <!-- {#if labels.dataset} -->
   <p class="text-md text-stone-400">{datasetLabel}</p>
+  <!-- {/if} -->
 
   <div class="flex gap-1 items-center">
     <p class="text-lg bold font-semibold">
-      {totalValue.toFixed(digitsToRound)}<span class="font-normal"
-        >{" "}{unit}
-      </span>
+      {totalValue.toFixed(digitsToRound)}
+      <span class="font-normal">{" "}{unit}</span>
     </p>
     {#if iconDenom != null}
       <svelte:component this={icon(iconDenom)} class="h-6 w-6" />
@@ -98,34 +109,18 @@
       <ArrowDown class="inline" />{/if}
     {" "}{getRangeText(timeRange, timeDifference)}
   </p>
-  <div class="flex">
-    <button
-      class={`${timeRange === TimeRange["1D"] ? "text-blue-500 underline" : "text-stone-400"} border-x-2 px-2 border-stone-400`}
-      on:click={() => setTimeRange(TimeRange["1D"])}>1D</button
-    >
-    <button
-      class={`${timeRange === TimeRange["5D"] ? "text-blue-500 underline" : "text-stone-400"} border-r-2 px-2 border-stone-400`}
-      on:click={() => setTimeRange(TimeRange["5D"])}>5D</button
-    >
-    <button
-      class={`${timeRange === TimeRange["2W"] ? "text-blue-500 underline" : "text-stone-400"} border-r-2 px-2 border-stone-400`}
-      on:click={() => setTimeRange(TimeRange["2W"])}>2W</button
-    >
-    <button
-      class={`${timeRange === TimeRange["6M"] ? "text-blue-500 underline" : "text-stone-400"} border-r-2 px-2 border-stone-400`}
-      on:click={() => setTimeRange(TimeRange["6M"])}>6M</button
-    >
-    <button
-      class={`${timeRange === TimeRange["1Y"] ? "text-blue-500 underline" : "text-stone-400"} border-r-2 px-2 border-stone-400`}
-      on:click={() => setTimeRange(TimeRange["1Y"])}>1Y</button
-    >
-    <button
-      class={`${timeRange === TimeRange["MAX"] ? "text-blue-500 underline" : "text-stone-400"} border-r-2 px-2 border-stone-400`}
-      on:click={() => setTimeRange(TimeRange["MAX"])}>MAX</button
-    >
+  <div class="flex justify-between">
+    {#each Object.values(TimeRange) as range}
+      <button
+        class={`${timeRange === range ? "text-blue-500" : "text-stone-400"}`}
+        on:click={() => setTimeRange(range)}
+      >
+        {range}
+      </button>
+    {/each}
   </div>
 
-  <DateLineChart
+  <DateBarChart
     chartData={aggregatedDates}
     {datasetLabel}
     {yLabel}
@@ -138,21 +133,21 @@
     <label class="inline-flex items-center cursor-pointer justify-center">
       <input
         type="checkbox"
-        value=""
+        value="false"
         class="sr-only peer"
-        on:click={toggleShouldKeepFuture}
+        bind:checked={shouldKeepFuture}
       />
       <div
         class="relative w-11 h-6 bg-stone-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
       ></div>
-      <span class="ms-3 text-sm font-medium text-stone-400"
-        >Show Future {datasetLabel}</span
-      >
+      <span class="ms-3 text-sm font-medium text-stone-400">
+        Show Future {datasetLabel}
+      </span>
     </label>
   {/if}
   {#if footerComment !== ""}
-    <span class="mt-2 text-sm italic text-stone-400 text-center"
-      >{footerComment}</span
-    >
+    <span class="mt-2 text-sm italic text-stone-400 text-center">
+      {footerComment}
+    </span>
   {/if}
 </div>

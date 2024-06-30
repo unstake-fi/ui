@@ -1,4 +1,4 @@
-import type { DateLineChartData } from "$lib/graph/types";
+import type { DataPoint } from "$lib/graph/types";
 import type { CONTROLLERS, RESERVES } from "@entropic-labs/unstake.js";
 
 type ControllerConfig = NonNullable<typeof CONTROLLERS[string][string]>;
@@ -22,8 +22,8 @@ export type UnstakeAnalytics = {
 
 export type ControllerAnalytics = {
   controller: string;
-  pnlData: DateLineChartData[];
-  frequency: DateLineChartData[];
+  pnlData: DataPoint[];
+  frequency: DataPoint[];
   offerDenom: string;
   askDenom: string;
 };

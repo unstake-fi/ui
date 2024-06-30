@@ -10,6 +10,7 @@ import { MAINNET } from "$lib/resources/networks";
 import { HttpClient, Tendermint37Client } from "@cosmjs/tendermint-rpc";
 import { env } from "$env/dynamic/private";
 import { createKujiraClient } from "$lib/network/connect";
+import { estimatePnL } from "$lib/analytics/utils";
 
 const postgresQuery = (db: pkg.PoolClient, text: string, params: string[]) =>
   db.query(text, params);
@@ -39,11 +40,11 @@ export const load: PageServerLoad = async ({ locals }) => {
         `
         SELECT "endTime", "controller", "startTime", "protocolFee", "unbondAmount"
         FROM unstake
-        WHERE (NOT "startBlockHeight"=0) AND (NOT "endBlockHeight"=0) AND (NOT "controller"='')
+        WHERE (NOT "startBlockHeight"=0) AND (NOT "endBlockHeight"=0)
         ORDER BY "endTime" DESC
         LIMIT $1
         `,
-        ["20"]
+        ["100"]
       ),
       // Query necessary data to calculate analytics for Unstake events that haven't ended
       postgresQuery(
@@ -51,11 +52,11 @@ export const load: PageServerLoad = async ({ locals }) => {
         `
         SELECT "reserveAmount", "vaultDebt", "debtAmount", "providerRedemption", "unbondAmount",  "startTime", "controller"
         FROM unstake
-        WHERE (NOT "startBlockHeight"=0) AND ("endBlockHeight"=0) AND (NOT "controller"='')
+        WHERE (NOT "startBlockHeight"=0) AND ("endBlockHeight"=0)
         ORDER BY "startTime" DESC
         LIMIT $1
         `,
-        ["20"]
+        ["100"]
       ),
       // Query vault debts
       vaultDebtRatios,
@@ -72,6 +73,17 @@ export const load: PageServerLoad = async ({ locals }) => {
         controller: CONTROLLERS[MAINNET][row.controller]!,
       }));
 
+    const incompleteUnstakeAnalyticsWithPnL: UnstakeAnalytics[] = incompleteUnstakeAnalytics.map((data) => {
+      const { pnl, endTime } = estimatePnL(data, vaultDebts);
+      return {
+        pnl,
+        startTime: data.startTime,
+        endTime,
+        unbondAmount: data.unbondAmount,
+        controller: data.controller,
+      };
+    });
+
     const unstakeAnalyticsData: UnstakeAnalytics[] =
       completedEventAnalytics.rows.map((row) => ({
         pnl: row.protocolFee,
@@ -82,15 +94,13 @@ export const load: PageServerLoad = async ({ locals }) => {
       }));
     return {
       unstakeAnalyticsData,
-      incompleteUnstakeAnalytics,
-      vaultDebts,
+      incompleteUnstakeAnalytics: incompleteUnstakeAnalyticsWithPnL,
     };
   } catch (err) {
     console.error(err);
     return {
       unstakeAnalyticsData: [],
       incompleteUnstakeAnalytics: [],
-      vaultDebts: {},
     };
   }
 };
