@@ -1,7 +1,4 @@
-import type {
-  IncompleteUnstakeAnalytics,
-  VaultDebts,
-} from "./types";
+import type { IncompleteUnstakeAnalytics, VaultDebts } from "./types";
 import { BigNumber } from "bignumber.js";
 
 export function groupBy<T, K>(list: T[], keyGetter: (input: T) => K) {
@@ -18,13 +15,23 @@ export function groupBy<T, K>(list: T[], keyGetter: (input: T) => K) {
   return map;
 }
 
-export function estimatePnL(unstake: IncompleteUnstakeAnalytics, vaultDebtRates: VaultDebts) {
-  const { controller, debtAmount, providerRedemption, reserveAmount, startTime, unbondAmount, vaultDebt } = unstake;
+export function estimatePnL(
+  unstake: IncompleteUnstakeAnalytics,
+  vaultDebtRates: VaultDebts
+) {
+  const {
+    controller,
+    debtAmount,
+    providerRedemption,
+    reserveAmount,
+    startTime,
+    unbondAmount,
+    vaultDebt,
+  } = unstake;
   const expectedReturn = BigNumber(providerRedemption).multipliedBy(
     BigNumber(unbondAmount)
   );
 
-  // Make sure controller has a vault debt
   const currentVaultDebt = vaultDebtRates[controller.vault_address];
   const debtRateDelta = BigNumber(currentVaultDebt).minus(BigNumber(vaultDebt));
 
@@ -45,4 +52,11 @@ export function estimatePnL(unstake: IncompleteUnstakeAnalytics, vaultDebtRates:
     pnl: expectedPnl.toString(),
     endTime: new Date(startTime.getTime() + unbondTimeMs),
   };
+}
+
+export function mapNonNull<S, T>(
+  list: S[],
+  func: (data: S, idx: number) => T | null
+) {
+  return list.map(func).filter((d) => d != null);
 }
