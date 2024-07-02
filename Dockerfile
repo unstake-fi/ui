@@ -1,17 +1,12 @@
 # syntax = docker/dockerfile:1
 
 # Adjust BUN_VERSION as desired
-ARG BUN_VERSION=1.1.9
-FROM oven/bun:${BUN_VERSION}-slim as base
+FROM node:20 as base
 
 LABEL fly_launch_runtime="SvelteKit"
 
 # SvelteKit app lives here
 WORKDIR /app
-
-# Set production environment
-ENV NODE_ENV="production"
-
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
@@ -22,17 +17,17 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link .npmrc bun.lockb package.json ./
-RUN bun install
+RUN yarn install
 
 # Copy application code
 COPY --link . .
 
 # Build application
-RUN bun --bun run build
+RUN yarn build
 
 # Remove development dependencies
 RUN rm -rf node_modules && \
-    bun install --ci
+    yarn install --ci
 
 # Final stage for app image
 FROM base
@@ -42,6 +37,9 @@ COPY --from=build /app/build /app/build
 COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/package.json /app
 
+# Set production environment
+ENV NODE_ENV="production"
+
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "bun", "run", "start" ]
+CMD [ "yarn", "start" ]
