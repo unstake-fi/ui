@@ -3,7 +3,7 @@ import { connectToDb } from "$lib/db";
 import { createKujiraClient } from "$lib/network/connect";
 import { MAINNET } from "$lib/resources/networks";
 import { HttpClient, Tendermint37Client } from "@cosmjs/tendermint-rpc";
-import type { Handle } from "@sveltejs/kit";
+import type { Handle, HandleServerError } from "@sveltejs/kit";
 
 if (!env["RPC_KAIYO_1"]) {
   throw new Error("RPC_KAIYO_1 not found in env");
@@ -26,4 +26,15 @@ export const handle: Handle = async ({ event, resolve }) => {
   db.release();
 
   return response;
+};
+
+export const handleError: HandleServerError = async ({ error, status, message }) => {
+  if (status !== 404) {
+    console.error(error);
+  }
+
+  return {
+    message,
+    status,
+  };
 };
