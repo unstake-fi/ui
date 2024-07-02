@@ -40,6 +40,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Analytics | UNSTAKE.FI</title>
+</svelte:head>
+
 <div class="max-w-screen-lg mx-auto mb-10">
   <div class="flex flex-row justify-between w-full my-4 gap-7">
     <h1 class="text-2xl xs:text-3xl md:text-4xl">Analytics</h1>
@@ -96,11 +100,11 @@
         <p class="text-md text-stone-400">Completed Unstakings</p>
         <p class="text-lg bold font-semibold">
           {completeAnalyticsDataByAsset.length}
-          <span class="font-normal"
-            >{completeAnalyticsDataByAsset.length === 1
+          <span class="font-normal">
+            {completeAnalyticsDataByAsset.length === 1
               ? "Unstaking"
-              : "Unstakings"}</span
-          >
+              : "Unstakings"}
+          </span>
         </p>
       </div>
       <div class="overflow-y-auto">
@@ -173,11 +177,11 @@
         <p class="text-md text-stone-400">Started Unstakings</p>
         <p class="text-lg bold font-semibold">
           {incompleteAnalyticsDataByAsset.length}
-          <span class="font-normal"
-            >{incompleteAnalyticsDataByAsset.length === 1
+          <span class="font-normal">
+            {incompleteAnalyticsDataByAsset.length === 1
               ? "Unstaking"
-              : "Unstakings"}</span
-          >
+              : "Unstakings"}
+          </span>
         </p>
       </div>
       <div class="overflow-y-auto">
