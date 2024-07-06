@@ -3,16 +3,15 @@
   import "../app.css";
   import { dev } from "$app/environment";
   import { page } from "$app/stores";
+  import { env } from "$env/dynamic/public";
 
   let PUBLIC_ANALYTICS_ID: string | null = null;
   let PUBLIC_ANALYTICS_URL: string | null = null;
   if (!dev) {
-    import("$env/static/public").then((env: any) => {
-      if (env["PUBLIC_ANALYTICS_ID"] && env["PUBLIC_ANALYTICS_URL"]) {
-        PUBLIC_ANALYTICS_ID = env.PUBLIC_ANALYTICS_ID;
-        PUBLIC_ANALYTICS_URL = env.PUBLIC_ANALYTICS_URL;
-      }
-    });
+    if (env["PUBLIC_ANALYTICS_ID"] && env["PUBLIC_ANALYTICS_URL"]) {
+      PUBLIC_ANALYTICS_ID = env.PUBLIC_ANALYTICS_ID;
+      PUBLIC_ANALYTICS_URL = env.PUBLIC_ANALYTICS_URL;
+    }
   }
 
   setupEventListeners();
