@@ -18,9 +18,9 @@
   let incompleteAnalyticsDataByAsset: UnstakeAnalytics[] = [];
 
   let selectedAsset = "ukuji";
-  let selectedDataset = dataByAsset.get(selectedAsset)!;
+  let selectedDataset = dataByAsset.get(selectedAsset);
   $: if (selectedAsset) {
-    selectedDataset = dataByAsset.get(selectedAsset)!;
+    selectedDataset = dataByAsset.get(selectedAsset);
     completeAnalyticsDataByAsset = unstakeAnalyticsData.filter(
       (d) => d.controller.offer_denom === selectedAsset
     );
@@ -63,6 +63,7 @@
     class="flex flex-col w-full items-center justify-center align-center gap-4 mt-4"
   >
     <div class="flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
+      {#if selectedDataset != null}
       <DateBarChartWrapper
         class="md:basis-1/2 w-full"
         data={selectedDataset}
@@ -91,6 +92,9 @@
         iconDenom={selectedDataset[0].controller.offer_denom}
         shouldKeepFutureToggle
       />
+      {:else}
+        <p>Analytics are not available. Please check again in the future.</p>
+      {/if}
     </div>
   </div>
 
