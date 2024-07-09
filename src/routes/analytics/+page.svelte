@@ -32,7 +32,7 @@
   function formatBalance(balance: Balance) {
     const normalizedBalance = balance.normalized();
 
-    if (normalizedBalance < BigNumber(0.01)) {
+    if (normalizedBalance.abs() < BigNumber(0.01)) {
       return normalizedBalance.toPrecision(1);
     }
 
