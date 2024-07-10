@@ -69,7 +69,7 @@ export function msInRange(timeRange: TimeRange) {
     case TimeRange["1Y"]:
       return 31557600000;
     case TimeRange.MAX:
-      return Date.now() - new Date("12/01/2023").getTime();
+      return Date.now() - new Date("11/01/2023").getTime();
   }
 }
 
