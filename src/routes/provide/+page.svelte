@@ -1,18 +1,18 @@
 <script lang="ts">
   import { client, savedNetwork } from "$lib/network/stores";
   import { refreshing } from "$lib/refreshing";
-  import {
-    RESERVES,
-    type ReserveStatusResponse,
-  } from "$lib/resources/registry";
+  import { type ReserveStatusResponse } from "$lib/resources/registry";
   import { Balance } from "$lib/wallet/coin";
   import { get } from "svelte/store";
   import { BigNumber } from "bignumber.js";
   import ReserveWidget from "$lib/components/reserve/ReserveWidget.svelte";
   import WalletInfo from "$lib/components/WalletInfo.svelte";
   import ReserveMigration from "$lib/components/ReserveMigration.svelte";
+  import { RESERVES } from "@entropic-labs/unstake.js";
 
-  $: allReserves = Object.values(RESERVES[$savedNetwork.chainId]);
+  $: allReserves = Object.values(
+    RESERVES[$savedNetwork.chainId]
+  ) as NonNullable<(typeof RESERVES)[string][number]>[];
 
   const reserveStatuses = refreshing(
     async () => {
@@ -27,15 +27,15 @@
 
           status.available = Balance.fromAmountDenom(
             status.available,
-            reserve.baseDenom
+            reserve.base_denom
           );
           status.total = Balance.fromAmountDenom(
             status.total,
-            reserve.baseDenom
+            reserve.base_denom
           );
           status.deployed = Balance.fromAmountDenom(
             status.deployed,
-            reserve.baseDenom
+            reserve.base_denom
           );
           status.reserve_redemption_rate = new BigNumber(
             status.reserve_redemption_rate

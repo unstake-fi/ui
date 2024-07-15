@@ -10,6 +10,7 @@ import { estimatePnL } from "$lib/analytics/utils";
 import { mapNonNull } from "../../lib/analytics/utils";
 import { CacheContainer } from "node-ts-cache";
 import { MemoryStorage } from "node-ts-cache-storage-memory";
+import { error } from "@sveltejs/kit";
 
 const postgresQuery = (db: pkg.PoolClient, text: string, params: string[]) =>
   db.query(text, params);
@@ -42,6 +43,10 @@ async function getCachedAnalytics(
 
 export const load: PageServerLoad = async ({ locals }) => {
   const { db, rpc } = locals;
+
+  if (!db) {
+    return error(500, "Internal Error fetching Analytics.");
+  }
 
   const allVaults = [
     ...new Set(

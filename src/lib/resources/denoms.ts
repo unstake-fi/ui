@@ -1,5 +1,5 @@
-import { RESERVES } from "./registry";
 import { savedNetwork } from "$lib/network/stores";
+import { RESERVES } from "@entropic-labs/unstake.js";
 import { get } from "svelte/store";
 
 export const DENOMS: { [denom: string]: { name: string, dec: number } } = {
@@ -17,6 +17,7 @@ export const DENOMS: { [denom: string]: { name: string, dec: number } } = {
     "factory/kujira1sc6a0347cc5q3k890jj0pf3ylx2s38rh4sza4t/ufuzn": { name: "FUZN", dec: 6 },
     "factory/kujira14qqwk3655csqvcg5ft37z25aped46s86vplma4mstp73r0nuy8dqy2xh84/unut": { name: "NUT", dec: 6 },
     "factory/kujira14qqwk3655csqvcg5ft37z25aped46s86vplma4mstp73r0nuy8dqy2xh84/usnut": { name: "sNUT", dec: 6 },
+    "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2": { name: "ATOM", dec: 6 },
 };
 
 export function denom(denom: string): { name: string, dec: number } | undefined {
@@ -26,8 +27,8 @@ export function denom(denom: string): { name: string, dec: number } | undefined 
         const reserve = RESERVES[chainId]?.[contract];
         if (reserve && subdenom === "ursv") {
             return {
-                name: `ux${DENOMS[reserve.baseDenom].name}`,
-                dec: DENOMS[reserve.baseDenom].dec,
+                name: `ux${DENOMS[reserve.base_denom].name}`,
+                dec: DENOMS[reserve.base_denom].dec,
             }
         }
     }

@@ -2,7 +2,7 @@
   import { client, savedNetwork } from "$lib/network/stores";
   import { balances } from "$lib/onchain/queries";
   import { DENOMS } from "$lib/resources/denoms";
-  import { CONTROLLERS, RESERVES } from "$lib/resources/registry";
+  import { CONTROLLERS } from "$lib/resources/registry";
   import { signer } from "$lib/wallet/stores";
   import { formatBigNumber } from "$lib/wallet/utils";
   import { derived, get, writable } from "svelte/store";
@@ -13,6 +13,7 @@
   import { TxStep, broadcastTx, simulate } from "$lib/onchain/transaction";
   import type { DeliverTxResponse } from "@cosmjs/stargate";
   import TxProgress from "./TxProgress.svelte";
+  import { RESERVES } from "@entropic-labs/unstake.js";
 
   const toMigrate = derived(
     [signer.resolved, balances.resolved],
@@ -46,7 +47,7 @@
       let msgs = [];
       for (const { controller, reserve } of $toMigrate) {
         let reserveConfig = Object.values(RESERVES[$savedNetwork.chainId]).find(
-          (r) => r.baseDenom === controller.offerDenom
+          (r) => r!.base_denom === controller.offerDenom
         );
         if (!reserveConfig)
           throw new Error(

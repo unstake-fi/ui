@@ -6,7 +6,7 @@
   export let status: Promise<ReserveStatusResponse>;
 
   $: utilization = status.then((s) => {
-    if (s.total.amount.isZero()) return 67.5; //TODO: set to 0
+    if (s.total.amount.isZero()) return 0;
     return s.deployed.amount.div(s.total.amount).times(100).toNumber();
   });
 

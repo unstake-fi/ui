@@ -17,18 +17,25 @@ export const handle: Handle = async ({ event, resolve }) => {
       async (client) =>
         await createKujiraClient(client, MAINNET, env["RPC_kaiyo-1"]!)
     ),
-    connectToDb(),
+    connectToDb().catch((error) => {
+      console.error("Error connecting to db");
+      return null;
+    }),
   ]);
 
   event.locals = { rpc, db };
 
   const response = await resolve(event);
-  db.release();
+  db?.release();
 
   return response;
 };
 
-export const handleError: HandleServerError = async ({ error, status, message }) => {
+export const handleError: HandleServerError = async ({
+  error,
+  status,
+  message,
+}) => {
   if (status !== 404) {
     console.error(error);
   }

@@ -32,7 +32,7 @@
   export let reserve: ReserveConfig;
 
   $: utilization = status.then((s) => {
-    if (s.total.amount.isZero()) return 67.5; //TODO: set to 0
+    if (s.total.amount.isZero()) return 0;
     return s.deployed.amount.div(s.total.amount).times(100).toNumber();
   });
 
@@ -42,7 +42,7 @@
     ([$signer, $balances, $selected]) => {
       if (!$balances || !$signer) return undefined;
       const denom =
-        $selected === "provide" ? reserve.baseDenom : reserve.rsvDenom;
+        $selected === "provide" ? reserve.base_denom : reserve.rsv_denom;
       return $balances.get(denom)?.normalized() ?? BigNumber(0);
     }
   );
@@ -50,7 +50,7 @@
   const amount = writable("");
   const amountRaw = derived([amount, selected], ([$amount, $selected]) => {
     const denom =
-      $selected === "provide" ? reserve.baseDenom : reserve.rsvDenom;
+      $selected === "provide" ? reserve.base_denom : reserve.rsv_denom;
     if (!$amount) return Balance.fromHuman("0", denom);
     return Balance.fromHuman($amount, denom);
   });
@@ -140,11 +140,11 @@
         <CircularProgress class="p-10" percent={utilization}>
           <div class="flex flex-col items-center gap-0.5">
             <svelte:component
-              this={icon(reserve.baseDenom)}
+              this={icon(reserve.base_denom)}
               class="h-16 w-16 mt-2"
             />
             <p class="text-sm text-center">
-              {denom(reserve.baseDenom)?.name}
+              {denom(reserve.base_denom)?.name}
             </p>
           </div>
         </CircularProgress>
@@ -175,7 +175,7 @@
                   <p class="text-inherit">
                     {Balance.fromHuman(
                       $maxSelectedDenom.toFixed(),
-                      reserve.baseDenom
+                      reserve.base_denom
                     ).display(2)}
                   </p>
                 {:else}
@@ -193,7 +193,7 @@
                       $amountRaw.amount
                         .dividedBy(stats.reserve_redemption_rate)
                         .toString(),
-                      reserve.rsvDenom
+                      reserve.rsv_denom
                     ).display(4)}
                   </p>
                 </div>
@@ -226,7 +226,7 @@
                   <p class="text-inherit">
                     {Balance.fromHuman(
                       $maxSelectedDenom.toFixed(),
-                      reserve.rsvDenom
+                      reserve.rsv_denom
                     ).display(2)}
                   </p>
                 {:else}
@@ -244,7 +244,7 @@
                       $amountRaw.amount
                         .times(stats.reserve_redemption_rate)
                         .toString(),
-                      reserve.baseDenom
+                      reserve.base_denom
                     ).display(4)}
                   </p>
                 </div>
