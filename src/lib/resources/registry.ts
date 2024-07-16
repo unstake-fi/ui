@@ -188,3 +188,10 @@ export interface ReserveStatusResponse {
   reserve_redemption_rate: BigNumber;
   apr: BigNumber | null;
 }
+
+export const REWARDS_CONTRACT = {
+  [MAINNET]:
+    "kujira13n3653vqxtptqsjsyqf8pf0vk66ty02767f2mjm57kxktaxkl4ss6da8l4",
+  [TESTNET]: "",
+  [POND]: "",
+};

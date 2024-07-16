@@ -37,7 +37,7 @@
     </a>
     <nav class="flex gap-2 md:gap-3 items-center text-sm xs:text-base">
       <a href="/analytics" class:active={path === "/analytics"}>Analytics</a>
-      <a href="/provide" class:active={path === "/provide"}>Provide</a>
+      <a href="/protocol" class:active={path === "/protocol"}>Protocol</a>
       <a href="/" class:active={path === "/"}>Unstake</a>
     </nav>
   </div>

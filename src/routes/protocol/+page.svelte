@@ -9,6 +9,7 @@
   import WalletInfo from "$lib/components/WalletInfo.svelte";
   import ReserveMigration from "$lib/components/ReserveMigration.svelte";
   import { RESERVES } from "@entropic-labs/unstake.js";
+  import StakerInfo from "$lib/components/StakerInfo.svelte";
 
   $: allReserves = Object.values(
     RESERVES[$savedNetwork.chainId]
@@ -51,7 +52,7 @@
   );
 </script>
 
-<div class="max-w-prose mx-auto">
+<div class="max-w-screen-md mx-auto">
   <div class="mb-4">
     <ReserveMigration />
   </div>
@@ -78,4 +79,11 @@
       />
     {/each}
   </div>
+</div>
+
+<div class="max-w-screen-md mx-auto my-4">
+  <div class="w-full flex mb-2">
+    <h1 class="text-2xl xs:text-3xl md:text-4xl text-center">Unstake DAO</h1>
+  </div>
+  <StakerInfo />
 </div>
