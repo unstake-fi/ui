@@ -133,6 +133,7 @@
     },
     { refreshOn: [client, controller, amountRaw], debounce: 300 }
   );
+  const offerResolved = offer.resolved;
 
   const offerRate = refreshing(
     async () => {
@@ -265,6 +266,42 @@
       return res;
     });
   }
+
+  const mantaSwapRate = refreshing(
+    async () => {
+      const req = {
+        input: {
+          denom: $selectedConfig!.askDenom,
+          amount: $amountRaw,
+          slippage: "0.01",
+        },
+        output: {
+          denom: $selectedConfig!.offerDenom,
+        },
+      };
+      if (!browser) return null;
+      const res = await fetch("https://api.mantaswap.app/kaiyo-1/route", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(req),
+      }).then((res) => res.json());
+
+      if (res.routes.length > 0) {
+        return Balance.fromAmountDenom(
+          res.routes[0].amount,
+          $selectedConfig!.offerDenom
+        );
+      } else {
+        throw new Error("No routes found");
+      }
+    },
+    {
+      refreshOn: [amountRaw, controller],
+      debounce: 300,
+    }
+  );
 </script>
 
 <svelte:head>
@@ -363,35 +400,56 @@
       You receive
     </p>
     <div class="flex flex-row items-center">
-      {#await $offer}
-        <div class="py-4 flex-grow">
+      <div class="flex-grow pt-4 text-lg">
+        {#await $offer}
           <Loading class="w-7 h-7 fill-stone-400" />
-        </div>
-      {:then offer}
-        {#if offer}
-          <p class="py-4 flex-grow text-stone-200">
-            {offer.amount.humanAmount(4)}
-          </p>
-        {:else}
-          <p class="py-4 text-lg flex-grow text-stone-400">-</p>
-        {/if}
-      {:catch e}
-        <p class="py-4 text-lg flex-grow text-red-500">-</p>
-      {/await}
-
-      <div class="flex flex-col">
-        <div
-          class="flex space-x-2 items-center h-full text-stone-200 px-4 rounded-md"
-        >
-          {#if $selectedConfig !== null}
-            <svelte:component
-              this={icon($selectedConfig.offerDenom)}
-              class="w-6 h-6"
-            />
-            <p>{denom($selectedConfig.offerDenom)?.name}</p>
+        {:then offer}
+          {#if offer}
+            <p class="text-stone-200">
+              {offer.amount.humanAmount(4)}
+            </p>
+          {:else}
+            <p class="text-stone-400">-</p>
           {/if}
-        </div>
+        {:catch e}
+          <p class="text-red-500">-</p>
+        {/await}
+      </div>
 
+      <div
+        class="flex space-x-2 items-center h-full text-stone-200 px-4 rounded-md"
+      >
+        {#if $selectedConfig !== null}
+          <svelte:component
+            this={icon($selectedConfig.offerDenom)}
+            class="w-6 h-6"
+          />
+          <p>{denom($selectedConfig.offerDenom)?.name}</p>
+        {/if}
+      </div>
+    </div>
+    <div class="flex justify-between items-end">
+      <div use:autoAnimate>
+        {#await Promise.all([$mantaSwapRate, $offer]) then [swapReturn, offer]}
+          {#if swapReturn && offer}
+            {@const difference = offer.amount.sub(swapReturn)}
+            {@const differencePct = difference.amount.div(offer.amount.amount)}
+            {#if difference.amount.gt(0)}
+              <p class="text-xs text-stone-500 -mb-1 mt-1">Compared to DEX</p>
+              <p>
+                <span
+                  class="from-red-600 via-red-500 to-amber-500 text-transparent bg-gradient-to-tr bg-clip-text font-bold"
+                >
+                  +{difference.display(3)} (+{differencePct
+                    .times(100)
+                    .toFixed(2)}%)
+                </span>
+              </p>
+            {/if}
+          {/if}
+        {/await}
+      </div>
+      <div>
         <div class="flex flex-col items-end mr-1">
           <p class="text-xs text-stone-500 -mb-1 mt-1">Unstake Rate</p>
           {#await $offerRate}
