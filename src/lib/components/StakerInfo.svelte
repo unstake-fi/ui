@@ -65,7 +65,6 @@
   );
 
   let msgsResolved = msgs.resolved;
-  $: console.log(msgsResolved);
 
   const txSim = refreshing(
     async () => {

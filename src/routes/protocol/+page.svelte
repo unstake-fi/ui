@@ -56,7 +56,6 @@
               .minus(historicalRate.rate)
               .div(fraction)
               .times(100);
-            console.log(elapsedTime, one_year, historicalRate, status.apr.toNumber());
           } else {
             status.apr = null;
           }
