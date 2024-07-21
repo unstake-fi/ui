@@ -48,27 +48,41 @@ async function getHistoricalQuerier(
   return createKujiraClient(tmClient, MAINNET, rpc.getRpc());
 }
 
-export const load: PageServerLoad = async ({}) => {
-  return {};
-  // const { rpc } = locals;
-  // const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-  // const blockHeight = await blockHeightAtTime(oneMonthAgo);
-  // const historicalRpc = await getHistoricalQuerier(blockHeight, rpc);
+export const load: PageServerLoad = async ({ locals }) => {
+  const { rpc } = locals;
+  const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const blockHeight = await blockHeightAtTime(oneMonthAgo);
+  const historicalRpc = await getHistoricalQuerier(blockHeight, rpc);
 
-  // const reservesStatus = Object.values(RESERVES[MAINNET]).map(async (reserve) => {
-  //   const creationDate = new Date(reserve!.creation * 1000);
-  //   const aprDate = oneMonthAgo < creationDate ? creationDate : oneMonthAgo;
-  //   console.log(oneMonthAgo.getTime(), creationDate.getTime(), aprDate.getTime())
-  //   try {
-  //     const status = await historicalRpc.wasm.queryContractSmart(reserve!.address, { status: {} });
-  //     const result = { rate: status["reserve_redemption_rate"] as string, date: aprDate.getTime() };
-  //     return [reserve!.address, result] as const;
-  //   } catch (_) {
-  //     return [reserve!.address, { rate: "1.0", date: aprDate.getTime() }] as const;
-  //   }
-  // });
-  // const historical = Object.fromEntries(await Promise.all(reservesStatus));
-  // return {
-  //   historical,
-  // };
+  const reservesStatus = Object.values(RESERVES[MAINNET]).map(
+    async (reserve) => {
+      const creationDate = new Date(reserve!.creation * 1000);
+      const aprDate = oneMonthAgo < creationDate ? creationDate : oneMonthAgo;
+      console.log(
+        oneMonthAgo.getTime(),
+        creationDate.getTime(),
+        aprDate.getTime()
+      );
+      try {
+        const status = await historicalRpc.wasm.queryContractSmart(
+          reserve!.address,
+          { status: {} }
+        );
+        const result = {
+          rate: status["reserve_redemption_rate"] as string,
+          date: aprDate.getTime(),
+        };
+        return [reserve!.address, result] as const;
+      } catch (_) {
+        return [
+          reserve!.address,
+          { rate: "1.0", date: aprDate.getTime() },
+        ] as const;
+      }
+    }
+  );
+  const historical = Object.fromEntries(await Promise.all(reservesStatus));
+  return {
+    historical,
+  };
 };

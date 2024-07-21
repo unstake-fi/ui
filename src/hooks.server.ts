@@ -15,7 +15,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   const [rpc, db] = await Promise.all([
     Tendermint37Client.create(rpcClient).then(
       async (client) =>
-        await createKujiraClient(client, MAINNET, env["RPC_kaiyo-1"]!)
+        await createKujiraClient(client, MAINNET, env["RPC_KAIYO_1"]!)
     ),
     connectToDb().catch((error) => {
       console.error(`Error connecting to db: ${error}`);

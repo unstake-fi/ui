@@ -16,27 +16,31 @@
 </script>
 
 <div class={clazz}>
-  {#await apr then apr}
-    {#if apr}
-      <div class="flex items-end justify-between gap-1 w-full text-xs">
-        <p class="text-stone-500">APR:</p>
-        <p>Loading...</p>
+  <div class="flex items-end justify-between gap-1 w-full text-xs">
+    <p class="text-stone-500">APR (30d):</p>
+    {#await apr}
+      <p>Loading...</p>
+    {:then apr}
+      {#if apr}
         <p
           class="bg-gradient-to-tr from-red-600 via-red-500 to-amber-500 text-transparent bg-clip-text font-bold xs:text-sm"
         >
           {apr.toFixed(2)}%
         </p>
-      </div>
-    {/if}
-  {/await}
+      {:else}
+        <p class="text-stone-500">-</p>
+      {/if}
+    {:catch}
+      <p class="text-stone-500">-</p>
+    {/await}
+  </div>
+
   <div class="flex items-end justify-between gap-1 w-full text-xs">
     <p class="text-stone-500">Utilization:</p>
     {#await utilization}
       <p>Loading...</p>
     {:then util}
-      <p
-        class="bg-gradient-to-tr from-red-600 via-red-500 to-amber-500 text-transparent bg-clip-text font-bold xs:text-sm"
-      >
+      <p class="font-medium xs:text-sm">
         {util.toFixed(2)}%
       </p>
     {/await}

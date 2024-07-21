@@ -10,6 +10,9 @@
   import ReserveMigration from "$lib/components/ReserveMigration.svelte";
   import { RESERVES } from "@entropic-labs/unstake.js";
   import StakerInfo from "$lib/components/StakerInfo.svelte";
+  import type { PageData } from "./$types";
+
+  export let data: PageData;
 
   $: allReserves = Object.values(
     RESERVES[$savedNetwork.chainId]
@@ -41,6 +44,23 @@
           status.reserve_redemption_rate = new BigNumber(
             status.reserve_redemption_rate
           );
+
+          const historicalRate = data.historical[reserve.address];
+          if (historicalRate) {
+            const elapsedTime =
+              Date.now() - new Date(historicalRate.date).getTime();
+            const one_year = 365 * 24 * 60 * 60 * 1000;
+            const fraction = elapsedTime / one_year;
+
+            status.apr = status.reserve_redemption_rate
+              .minus(historicalRate.rate)
+              .div(fraction)
+              .times(100);
+            console.log(elapsedTime, one_year, historicalRate, status.apr.toNumber());
+          } else {
+            status.apr = null;
+          }
+
           return [reserve.address, status] as [string, ReserveStatusResponse];
         })
       );
