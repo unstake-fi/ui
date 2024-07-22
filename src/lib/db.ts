@@ -38,7 +38,7 @@ const postgresQuery = (db: pkg.PoolClient, text: string, params: string[]) =>
  *
  * @param db Postgres DB client
  * @param limit The maximum number of results in a single page
- * @param prevId The id of the last retrieved unstake record.
+ * @param prevDelegate The delegate of the last retrieved unstake record.
  * @param prevTimestamp The timestamp of the last retrieved unstake record.
  * @param controller An optional controller for the unstake records
  * @returns An error code and error message if the parameters are invalid.
@@ -47,7 +47,7 @@ const postgresQuery = (db: pkg.PoolClient, text: string, params: string[]) =>
 export const getPaginatedUnstakings = async (
   db: pkg.PoolClient,
   limit: string | null,
-  prevId: string | null,
+  prevDelegate: string | null,
   prevTimestamp: string | null,
   controller: string | null
 ) => {
@@ -81,7 +81,7 @@ export const getPaginatedUnstakings = async (
     const params: string[] = [];
 
     let sql = `
-    SELECT "id", "unbondAmount", "borrowAmount" as "offerAmount", "controller", "startTime" as "timestamp", "startBlockHeight"
+    SELECT "delegate", "unbondAmount", "borrowAmount" as "offerAmount", "controller", "startTime" as "timestamp", "startBlockHeight"
     FROM unstake
     WHERE "startBlockHeight" != 0
     `;
@@ -91,18 +91,18 @@ export const getPaginatedUnstakings = async (
       params.push(controller);
     }
 
-    if (prevId) {
-      sql += `AND "id" < $${paramIdx++} `;
-      params.push(prevId);
-    }
-
     if (prevTimestamp) {
       sql += `AND "startTime" < $${paramIdx++} `;
       params.push(prevTimestamp);
     }
 
+    if (prevDelegate) {
+      sql += `AND "delegate" < $${paramIdx++} `;
+      params.push(prevDelegate);
+    }
+
     sql += `
-    ORDER BY "id" DESC, "startTime" DESC
+    ORDER BY "startTime" DESC, "delegate" DESC
     LIMIT $${paramIdx}
     `;
     params.push(`${parsedLimit}`);
