@@ -62,11 +62,13 @@ export function mapNonNull<S, T>(
   return list.map(func).filter((d) => d != null);
 }
 
+const BIG_NUMBER_ONE = BigNumber(1.0);
+
 export function formatBalance(balance: Balance, decimals: number = 2) {
   return balance
     .normalized()
     .abs()
-    .isLessThan(BigNumber(Math.pow(1, -decimals)))
+    .isLessThan(BIG_NUMBER_ONE.shiftedBy(-decimals))
     ? balance.humanAmountWithPrecision(1)
     : balance.humanAmount(decimals);
 }
@@ -75,7 +77,7 @@ export function formatBalanceWithUnit(balance: Balance, decimals: number = 3) {
   return balance
     .normalized()
     .abs()
-    .isLessThan(BigNumber(Math.pow(1, -decimals)))
+    .isLessThan(BIG_NUMBER_ONE.shiftedBy(-decimals))
     ? balance.displayWithPrecision(1)
     : balance.display(decimals);
 }
