@@ -4,7 +4,7 @@
   import { icon } from "$lib/resources/registry";
   import { getRelativeTime } from "$lib/wallet/utils";
   import { Balance } from "$lib/wallet/coin";
-  import { groupBy } from "$lib/analytics/utils";
+  import { formatBalance, groupBy } from "$lib/analytics/utils";
   import { BigNumber } from "bignumber.js";
   import DateBarChartWrapper from "$lib/graph/DateBarChartWrapper.svelte";
   import DenomSelect from "$lib/components/DenomSelect.svelte";
@@ -27,16 +27,6 @@
     incompleteAnalyticsDataByAsset = incompleteUnstakeAnalytics.filter(
       (d) => d.controller.offer_denom === selectedAsset
     );
-  }
-
-  function formatBalance(balance: Balance) {
-    const normalizedBalance = balance.normalized();
-
-    if (normalizedBalance.abs() < BigNumber(0.01)) {
-      return normalizedBalance.toPrecision(1);
-    }
-
-    return balance.humanAmount(2);
   }
 </script>
 

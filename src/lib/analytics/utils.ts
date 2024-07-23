@@ -1,3 +1,4 @@
+import type { Balance } from "$lib/wallet/coin";
 import type { IncompleteUnstakeAnalytics, VaultDebts } from "./types";
 import { BigNumber } from "bignumber.js";
 
@@ -59,4 +60,22 @@ export function mapNonNull<S, T>(
   func: (data: S, idx: number) => T | null
 ) {
   return list.map(func).filter((d) => d != null);
+}
+
+export function formatBalance(balance: Balance, decimals: number = 2) {
+  return balance
+    .normalized()
+    .abs()
+    .isLessThan(BigNumber(Math.pow(1, -decimals)))
+    ? balance.humanAmountWithPrecision(1)
+    : balance.humanAmount(decimals);
+}
+
+export function formatBalanceWithUnit(balance: Balance, decimals: number = 3) {
+  return balance
+    .normalized()
+    .abs()
+    .isLessThan(BigNumber(Math.pow(1, -decimals)))
+    ? balance.displayWithPrecision(1)
+    : balance.display(decimals);
 }

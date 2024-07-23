@@ -2,6 +2,7 @@
   import { browser } from "$app/environment";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
+  import { formatBalanceWithUnit } from "$lib/analytics/utils";
   import DenomSelect from "$lib/components/DenomSelect.svelte";
   import NumberInput from "$lib/components/NumberInput.svelte";
   import ReserveMigration from "$lib/components/ReserveMigration.svelte";
@@ -440,7 +441,7 @@
                 <span
                   class="from-red-600 via-red-500 to-amber-500 text-transparent bg-gradient-to-tr bg-clip-text font-bold"
                 >
-                  +{difference.display(3)} (+{differencePct
+                  +{formatBalanceWithUnit(difference)} (+{differencePct
                     .times(100)
                     .toFixed(2)}%)
                 </span>

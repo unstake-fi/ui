@@ -36,8 +36,16 @@ export class Balance {
     return formatBigNumber(this.normalized(), decimals);
   }
 
+  public humanAmountWithPrecision(precision: number = 2): string {
+    return this.normalized().toPrecision(precision);
+  }
+
   public display(decimals?: number): string {
     return `${this.humanAmount(decimals)} ${this.name}`;
+  }
+
+  public displayWithPrecision(precision?: number): string {
+    return `${this.humanAmountWithPrecision(precision)} ${this.name}`;
   }
 
   public toCoin(): Coin {
